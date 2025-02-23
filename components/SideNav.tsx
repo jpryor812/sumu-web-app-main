@@ -28,19 +28,19 @@ export default function SideNav() {
       {/* Backdrop for mobile */}
       {!isCollapsed && isMobile && (
         <div 
-          className="fixed inset-0 gray-500 z-20"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           onClick={() => setIsCollapsed(true)}
         />
       )}
 
-      <div className={`fixed left-0 top-0 h-full gray-500 border-r border-gray-800 transition-all duration-300 z-30
+      <div className={`fixed left-0 top-0 h-full bg-black border-r border-gray-800 transition-all duration-300 z-50
         ${isCollapsed ? 'w-16' : 'w-64'} 
         ${isMobile && isCollapsed ? '-translate-x-full' : 'translate-x-0'}`}
       >
         {/* Toggle button */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`absolute -right-3 top-8 bg-gray-500 rounded-full p-1 hover:bg-gray-700 transition-colors
+          className={`absolute -right-3 top-8 bg-black rounded-full p-1 hover:bg-gray-900 transition-colors
             ${isMobile && isCollapsed ? 'right-0 translate-x-full' : ''}`}
         >
           {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

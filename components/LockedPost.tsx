@@ -34,7 +34,7 @@ export default function LockedPost({
   return (
     <div className="flex justify-center w-full">
       <div 
-        className="w-full max-w-2xl bg-[#1A1B1F] rounded-xl overflow-hidden border-2 border-gray-700 relative group"
+        className="w-full max-w-2xl bg-[#1A1B1F] rounded-xl overflow-hidden border-4 border-white relative group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -60,7 +60,7 @@ export default function LockedPost({
                   transition-all duration-500 transform
                   ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
                   px-6 py-3 bg-[#4040FF] backdrop-blur-sm rounded-full
-                  hover:bg-[#8040FF] text-3xl font-semibold text-white mt-4
+                  hover:bg-[#00BBFF] text-3xl font-semibold text-white mt-4
                   border border-white/20 shadow-lg
                   flex items-center gap-2
                 `}
@@ -78,7 +78,7 @@ export default function LockedPost({
           <p className="text-gray-400 mb-4">{date}</p>
 
           {!isSubscribed && (
-            <button className="w-full bg-[#2C2D31] hover:bg-[#3A3B3F] text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6">
+            <button className="w-full bg-[#00BF63] hover:bg-[#00EE3F] text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6">
               <Lock className="w-5 h-5" />
               Join to unlock
             </button>

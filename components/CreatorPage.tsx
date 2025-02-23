@@ -77,7 +77,7 @@ export default function CreatorPage() {
     }, []);
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex z-10 min-h-screen">
             <SideNav />
             
             <div className="flex-1 transition-all duration-300 overflow-y-auto h-screen"
