@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@loomhq/loom-embed": "^1.7.0",
+    "@loomhq/record-sdk": "^3.12.2",
+>>>>>>> 6723fc5 (Initial commit)
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@vercel/analytics": "^1.5.0",
