@@ -1,11 +1,11 @@
 import StaticAura from '@/components/StaticAura';
-import CreatorPage from '@/components/CreatorPage';
+import HomePage from '@/components/HomePage';
 
 export default function Home() {
   return (
     <main className="relative w-full min-h-screen">
       <StaticAura>
-        <CreatorPage />
+        <HomePage />
       </StaticAura>
     </main>
   );
