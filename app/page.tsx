@@ -1,11 +1,11 @@
 import StaticAura from '@/components/StaticAura';
-import HomePage from '@/components/HomePage';
+import LeaderboardPage from '@/components/LeaderboardPage';
 
 export default function Home() {
   return (
     <main className="relative w-full min-h-screen">
       <StaticAura>
-        <HomePage />
+        <LeaderboardPage />
       </StaticAura>
     </main>
   );
