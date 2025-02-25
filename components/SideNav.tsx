@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, Share2, Bell, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, MessageCircle, Bell, Repeat2, ChevronLeft, ChevronRight, MoreVertical, Trophy } from 'lucide-react';
 
 export default function SideNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -28,12 +28,12 @@ export default function SideNav() {
       {/* Backdrop for mobile */}
       {!isCollapsed && isMobile && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-gray-500 backdrop-blur-sm z-40"
           onClick={() => setIsCollapsed(true)}
         />
       )}
 
-      <div className={`fixed left-0 top-0 h-full bg-black border-r border-gray-800 transition-all duration-300 z-50
+      <div className={`fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-50 flex flex-col
         ${isCollapsed ? 'w-16' : 'w-64'} 
         ${isMobile && isCollapsed ? '-translate-x-full' : 'translate-x-0'}`}
       >
@@ -46,7 +46,8 @@ export default function SideNav() {
           {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
 
-        <div className="flex flex-col p-4 space-y-6">
+        {/* Main Navigation */}
+        <div className="flex-1 flex flex-col p-4 space-y-6">
           {/* Logo */}
           <Link href="/" className="mb-8 flex justify-center">
             <Image
@@ -65,27 +66,48 @@ export default function SideNav() {
               {!isCollapsed && <span>Home</span>}
             </Link>
             <Link href="/explore" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
-              <Share2 size={20} />
-              {!isCollapsed && <span>Explore</span>}
+              <MessageCircle size={20} />
+              {!isCollapsed && <span>Chat</span>}
             </Link>
             <Link href="/notifications" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
               <Bell size={20} />
               {!isCollapsed && <span>Notifications</span>}
             </Link>
             <Link href="/settings" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
-              <Settings size={20} />
-              {!isCollapsed && <span>Settings</span>}
+              <Repeat2 size={20} />
+              {!isCollapsed && <span>Recommendations</span>}
+            </Link>
+            <Link href="/leaderboard" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
+              <Trophy size={20} />
+              {!isCollapsed && <span>Leaderboard</span>}
             </Link>
           </nav>
+        </div>
 
-          {/* Recently Visited - only show when expanded */}
-          {!isCollapsed && (
-            <div className="mt-8">
-              <h3 className="text-sm font-semibold text-gray-400 mb-4">Recently Visited</h3>
-              <div className="space-y-3">
-                {/* Add recent creators here */}
-              </div>
+        {/* Profile Section */}
+        <div className={`p-4 border-t border-gray-800 bg-gray-800/50 flex items-center justify-between
+          ${isCollapsed ? 'space-x-0' : 'space-x-3'}`}
+        >
+          <div className="flex items-center min-w-0">
+            <div className="relative w-8 h-8 flex-shrink-0">
+              <Image
+                src="/profile_picture.jpg"
+                alt="Profile"
+                fill
+                className="rounded-full object-cover"
+              />
             </div>
+            {!isCollapsed && (
+              <div className="ml-3 flex-1 min-w-0">
+                <p className="text-white font-medium truncate">User Journeys</p>
+                <p className="text-gray-400 text-sm truncate">Creator</p>
+              </div>
+            )}
+          </div>
+          {!isCollapsed && (
+            <button className="p-1 hover:bg-gray-700 rounded-full transition-colors">
+              <MoreVertical size={20} className="text-gray-300" />
+            </button>
           )}
         </div>
       </div>

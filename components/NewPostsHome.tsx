@@ -103,7 +103,7 @@ export default function NewPostsHome() {
                         >
                             <div className="rounded-lg overflow-hidden relative">
                                 {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-900/70 to-green-950/90 z-10" />
+                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-900/70 to-green-700/90 z-10" />
                                 
                                 {/* Post Image */}
                                 <div className="relative h-48 w-full">
@@ -132,7 +132,7 @@ export default function NewPostsHome() {
                                     
                                     {/* Post Info */}
                                     <h3 className="text-white font-semibold">{post.title}</h3>
-                                    <p className="text-gray-500 font-semibold text-sm">{post.date}</p>
+                                    <p className="text-gray-400 font-semibold text-sm">{post.date}</p>
                                 </div>
                             </div>
                         </div>
