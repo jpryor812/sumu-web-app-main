@@ -46,9 +46,9 @@ export default function LeaderboardPage() {
           <h1 className="text-3xl font-bold text-gray-100 mb-8">Leaderboard</h1>
           
           {/* Stats Cards */}
-          <div className="grid grid-cols-11 gap-6 mb-10">
+          <div className="grid grid-cols-11 gap-6 mb-8">
             {/* Projected Pot - takes 6 columns (half the space) */}
-            <div className="col-span-4 bg-green-100 rounded-xl p-6 shadow-sm">
+            <div className="col-span-3 bg-green-100 rounded-xl p-4 shadow-sm">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700">Projected Pot</h3>
@@ -58,34 +58,49 @@ export default function LeaderboardPage() {
                   <p className="text-green-600 font-semibold mt-2">+{leaderboardStats.monthlyIncrease}% MoM increase</p>
                 </div>
                 <div className="bg-green-200 rounded-full p-2">
-                  <Image src="/money-bag.png" alt="Money Bag" width={32} height={32} />
+                  <p className="text-7xl">💰</p>
                 </div>
               </div>
             </div>
             
             {/* Total Creators - takes 3 columns (quarter of the space) */}
             <div className="col-span-3 bg-blue-100 rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-700">Total Creators</h3>
-              <div className="flex items-center justify-center mt-4">
-                <span className="text-5xl font-bold text-blue-600">{leaderboardStats.totalCreators}</span>
+              <div className="flex flex-row items-center">
+                <h3 className="text-4xl font-semibold text-gray-700 pl-6">Total Sumu Creators:</h3>
+                <span className="text-5xl font-bold pr-12 text-blue-600">{leaderboardStats.totalCreators}</span>
               </div>
             </div>
             
-            {/* Time Remaining - takes 3 columns (quarter of the space) */}
-            <div className="col-span-4 bg-yellow-100 rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-700">Time Remaining</h3>
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-center">
-                  <span className="text-3xl font-bold text-yellow-600">{leaderboardStats.timeRemaining.days}</span>
-                  <p className="text-sm font-semibold text-gray-600">Days</p>
+            {/* Time Remaining */}
+            <div className="col-span-5 bg-yellow-100 rounded-xl overflow-hidden shadow-md border border-yellow-200">
+              <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <h3 className="text-4xl font-bold pr-2 text-gray-800">Time Remaining Until Rewards⏳</h3>
                 </div>
-                <div className="text-center">
-                  <span className="text-3xl font-bold text-yellow-600">{leaderboardStats.timeRemaining.hours}</span>
-                  <p className="text-sm font-semibold text-gray-600">Hours</p>
-                </div>
-                <div className="text-center">
-                  <span className="text-3xl font-bold text-yellow-600">{leaderboardStats.timeRemaining.minutes}</span>
-                  <p className="text-sm font-semibold text-gray-600">Minutes</p>
+                
+                <div className="flex items-end pr-8 gap-1 md:gap-3">
+                  <div className="text-center mx-2">
+                    <span className="text-4xl font-bold text-gray-800">{leaderboardStats.timeRemaining.days}</span>
+                    <p className="text-sm font-semibold text-gray-600">DAYS</p>
+                  </div>
+                  
+                  <span className="text-2xl font-bold text-gray-400 pb-1">:</span>
+                  
+                  <div className="text-center mx-2">
+                    <span className="text-4xl font-bold text-gray-800">{leaderboardStats.timeRemaining.hours}</span>
+                    <p className="text-sm font-semibold text-gray-600">HOURS</p>
+                  </div>
+                  
+                  <span className="text-2xl font-bold text-gray-400 pb-1">:</span>
+                  
+                  <div className="text-center mx-2">
+                    <span className="text-4xl font-bold text-gray-800">{leaderboardStats.timeRemaining.minutes}</span>
+                    <p className="text-sm font-semibold text-gray-600">MINUTES</p>
+                  </div>
+                  
+                  <div className="ml-4 bg-yellow-200 rounded-full p-1 flex items-center justify-center w-16 h-16">
+                    <span className="text-4xl">🏆</span>
+                  </div>
                 </div>
               </div>
             </div>
