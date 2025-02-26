@@ -5,14 +5,22 @@ import Image from 'next/image';
 import { Search, ChevronDown, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import SideNav from '@/components/SideNav';
 import { allCreators, tier1Creators, tier2Creators, tier3Creators, tier4Creators, tier5Creators, leaderboardStats } from '@/data/leaderboardData';
+import RewardsInfoModal from '@/components/RewardsInfoModal';
 
 export default function LeaderboardPage() {
   const [selectedTier, setSelectedTier] = useState<string>('151-350');
   const [sortBy, setSortBy] = useState<string>('growthPercentage');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showRewardsModal, setShowRewardsModal] = useState(false);
 
-  // Get creators based on selected tier
+  // Get creators based on selected tier or all creators for Top Earners
   const getCreatorsByTier = () => {
+    // If Top Earners is selected, return all creators
+    if (sortBy === 'projectedSUMU') {
+      return allCreators;
+    }
+    
+    // Otherwise, filter by subscriber tier
     switch(selectedTier) {
       case '1-50': return tier1Creators;
       case '51-150': return tier2Creators;
@@ -21,9 +29,14 @@ export default function LeaderboardPage() {
     }
   };
 
-  // Get top 5 creators for the leaderboard showcase, sorted by growth percentage
+  // Get top 5 creators for the leaderboard showcase
   const topCreators = [...getCreatorsByTier()]
-    .sort((a, b) => b.growthPercentage - a.growthPercentage)
+    .sort((a, b) => {
+      if (sortBy === 'projectedSUMU') {
+        return b.projectedSUMU - a.projectedSUMU;
+      }
+      return b.growthPercentage - a.growthPercentage;
+    })
     .slice(0, 5);
 
   // Filter and sort creators for the table
@@ -43,31 +56,63 @@ export default function LeaderboardPage() {
       
       <main className="px-4 flex-1 min-h-screen ml-16 md:ml-64 overflow-y-auto">
         <div className="p-8">
-          <h1 className="text-3xl font-bold text-gray-100 mb-8">Leaderboard</h1>
+          <div className="flex mb-4">
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                setShowRewardsModal(true);
+              }}
+              className="inline-flex items-center text-md font-bold text-white hover:text-blue-200 transition-colors duration-200"
+            >
+              First time here? Click here to learn how we calculate rewards
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          <div className="flex flex-row justify-between">
+            <h1 className="text-3xl font-bold text-gray-100">Leaderboard</h1>
+            <p className="text-2xl bg-gradient-to-r from-green-400 to-green-600 rounded-full px-4 py-2 font-bold text-white mb-6">Total Sumu Creators: {leaderboardStats.totalCreators}</p>
+          </div>
           
           {/* Stats Cards */}
           <div className="grid grid-cols-11 gap-6 mb-8">
             {/* Projected Pot - takes 6 columns (half the space) */}
-            <div className="col-span-3 bg-green-100 rounded-xl p-4 shadow-sm">
+            <div className="col-span-3 bg-blue-100 rounded-xl p-4 shadow-sm">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Projected Pot</h3>
+                  <h3 className="text-xl font-semibold text-gray-700">Projected USDC Pot:</h3>
                   <div className="flex items-center mt-2">
-                    <span className="text-4xl font-bold text-green-600">${leaderboardStats.projectedPot.toLocaleString()}</span>
+                    <span className="text-4xl font-bold text-blue-500">{leaderboardStats.projectedPot.toLocaleString()} USDC</span>
                   </div>
                   <p className="text-green-600 font-semibold mt-2">+{leaderboardStats.monthlyIncrease}% MoM increase</p>
                 </div>
-                <div className="bg-green-200 rounded-full p-2">
-                  <p className="text-7xl">💰</p>
+                <div className="bg-blue-400 rounded-full p-2">
+                  <p className="text-6xl">💰</p>
                 </div>
               </div>
             </div>
             
-            {/* Total Creators - takes 3 columns (quarter of the space) */}
-            <div className="col-span-3 bg-blue-100 rounded-xl p-6 shadow-sm">
-              <div className="flex flex-row items-center">
-                <h3 className="text-4xl font-semibold text-gray-700 pl-6">Total Sumu Creators:</h3>
-                <span className="text-5xl font-bold pr-12 text-blue-600">{leaderboardStats.totalCreators}</span>
+            {/* Total Creators */}
+            <div className="col-span-3 bg-green-100 rounded-xl p-4 shadow-sm">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-700">Projected $SUMU Pot:</h3>
+                  <div className="flex items-center mt-2">
+                    <span className="text-4xl font-bold text-green-500">5,000 $SUMU</span>
+                  </div>
+                </div>
+                <div className="bg-green-400 rounded-full p-2 flex items-center justify-center w-20 h-20">
+                  <div className="relative w-16 h-16">
+                    <Image 
+                      src="/sumu-vert-square.png" 
+                      alt="Creator Icon" 
+                      fill 
+                      className="object-contain rounded-full"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -98,33 +143,61 @@ export default function LeaderboardPage() {
                     <p className="text-sm font-semibold text-gray-600">MINUTES</p>
                   </div>
                   
-                  <div className="ml-4 bg-yellow-200 rounded-full p-1 flex items-center justify-center w-16 h-16">
-                    <span className="text-4xl">🏆</span>
+                  <div className="ml-2 bg-yellow-200 rounded-full p-1 flex items-center justify-center w-20 h-20">
+                    <span className="text-5xl">🏆</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Subscriber Tiers */}
-          <div className="mb-2 flex-col justify-center">
-            <h3 className="text-xl text-center font-semibold text-gray-100 mb-4">Number of Subscribers</h3>
-            <div className="flex flex-row flex-wrap gap-3 justify-center">
-              {['1-50', '51-150', '151+'].map((tier) => (
-                <button
-                  key={tier}
-                  onClick={() => setSelectedTier(tier)}
-                  className={`px-6 py-3 rounded-full border min-w-[100px] text-xl font-semibold ${
-                    selectedTier === tier 
-                      ? 'bg-blue-500 text-white border-blue-500' 
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                  }`}
-                >
-                  {tier}
-                </button>
-              ))}
+          {/* Toggle for Top Growers / Top Earners */}
+          <div className="mb-6 mt-4 flex justify-center">
+            <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden">
+            <button
+                className={`px-6 py-3 text-2xl font-semibold ${
+                  sortBy === 'projectedSUMU' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setSortBy('projectedSUMU')}
+              >
+                Top Earners
+              </button>
+              <button
+                className={`px-6 py-3 text-2xl font-semibold ${
+                  sortBy === 'growthPercentage' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setSortBy('growthPercentage')}
+              >
+                Top Growers
+              </button>
             </div>
           </div>
+          
+          {/* Subscriber Tiers - only show when Top Growers is selected */}
+          {sortBy === 'growthPercentage' && (
+            <div className="mb-2 flex-col justify-center">
+              <h3 className="text-xl text-center font-semibold text-gray-100 mb-2">Number of Subscribers</h3>
+              <div className="flex flex-row flex-wrap gap-12 justify-center">
+                {['1-50', '51-150', '151+'].map((tier) => (
+                  <button
+                    key={tier}
+                    onClick={() => setSelectedTier(tier)}
+                    className={`px-8 py-4 rounded-full border min-w-[100px] text-2xl font-semibold ${
+                      selectedTier === tier 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                    }`}
+                  >
+                    {tier}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           
           {/* Current Leaders */}
           <h2 className="text-3xl font-bold text-gray-100 mb-6">Current Leaders</h2>
@@ -266,9 +339,18 @@ export default function LeaderboardPage() {
                     <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">SUMU Rewards</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200">
                   {filteredCreators.map((creator, index) => (
-                    <tr key={creator.id} className="hover:bg-gray-50">
+                    <tr 
+                      key={creator.id} 
+                      className={`
+                        ${index === 0 ? 'bg-white hover:bg-yellow-200' : ''}
+                        ${index === 1 ? 'bg-white hover:bg-gray-200' : ''}
+                        ${index === 2 ? 'bg-white hover:bg-amber-200' : ''}
+                        ${index === 3 || index === 4 ? 'bg-white hover:bg-blue-200' : ''}
+                        ${index > 4 ? 'bg-white hover:bg-gray-50' : ''}
+                      `}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {creator.trend === 'up' && <ArrowUp size={16} className="text-green-500 mr-1" />}
@@ -292,7 +374,7 @@ export default function LeaderboardPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-lg font-semibold text-gray-500">{creator.subscribersStart}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xl font-semibold text-gray-500">{creator.subscribersStart}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-lg font-semibold text-gray-500">{creator.subscribersNow}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-lg font-semibold text-green-600">+{creator.growthPercentage.toFixed(2)}%</div>
@@ -311,6 +393,10 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </main>
+      <RewardsInfoModal 
+        isOpen={showRewardsModal} 
+        onClose={() => setShowRewardsModal(false)} 
+      />
     </div>
   );
 }

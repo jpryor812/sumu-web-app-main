@@ -67,8 +67,8 @@ export const tier2Creators: Creator[] = [
 
 // Tier 3: 151-350 subscribers
 export const tier3Creators: Creator[] = [
-  generateRandomData("Theresa Webb", "3001", [300, 350], 1, 'up'),
-  generateRandomData("Floyd Miles", "3002", [250, 300], 2, 'up'),
+  generateRandomData("Theresa Webb", "3001", [197, 250], 1, 'up'),
+  generateRandomData("Floyd Miles", "3002", [169, 300], 2, 'up'),
   generateRandomData("Jacob Jones", "3003", [200, 300], 3, 'down'),
   generateRandomData("Amelia Taylor", "3004", [180, 250], 4, 'neutral'),
   generateRandomData("Benjamin Moore", "3005", [160, 220], 6, 'up'),
@@ -103,9 +103,10 @@ export const allCreators: Creator[] = [
 
 // Stats for the dashboard
 export const leaderboardStats = {
-  projectedPot: 8734,
-  monthlyIncrease: 14,
-  totalCreators: 432,
+  projectedPot: 1734,
+  projectedSUMUPot: 5200,
+  monthlyIncrease: 74,
+  totalCreators: 82,
   timeRemaining: {
     days: 12,
     hours: 4,
