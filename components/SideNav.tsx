@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, MessageCircle, Bell, Repeat2, ChevronLeft, ChevronRight, MoreVertical, Trophy, Users } from 'lucide-react';
+import { Home, MessageCircle, Bell, Repeat2, ChevronLeft, ChevronRight, MoreVertical, Trophy, Users, BarChart } from 'lucide-react';
 
 export default function SideNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -80,6 +80,10 @@ export default function SideNav() {
             <Link href="/leaderboard" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
               <Trophy size={20} />
               {!isCollapsed && <span>Leaderboard</span>}
+            </Link>
+            <Link href="/leaderboard" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
+              <BarChart size={20} />
+              {!isCollapsed && <span>Stats and Rewards</span>}
             </Link>
             <Link href="/referrals" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
               <Users size={20} />
