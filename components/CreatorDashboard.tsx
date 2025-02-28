@@ -7,6 +7,7 @@ import SideNav from '@/components/SideNav';
 import SubscriberGrowthChart from '@/components/SubscriberGrowthChart';
 import PostPerformance from '@/components/PostPerformance';
 import SumuOwnership from './SumuOwnership';
+import SumuExplainedModal from '@/components/SumuExplained';
 // Enhanced mock data with weekly and monthly timeframes only
 
 const userSumuBalance = 1280;
@@ -44,6 +45,7 @@ export default function CreatorDashboard() {
   const [activeSubscription, setActiveSubscription] = useState<'basic' | 'premium' | 'platinum'>('basic');
   const [postView, setPostView] = useState<'mostViewed' | 'mostRecent'>('mostViewed');
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
+  const [showSumuModal, setShowSumuModal] = useState(false);
   
   // Reset currentPostIndex when switching between Most Viewed and Most Recent
   useEffect(() => {
@@ -385,13 +387,22 @@ export default function CreatorDashboard() {
                 <h2 className="text-2xl font-bold mb-2">More About Your $SUMU Ownership</h2>
                 <p className="text-white opacity-90 max-w-xl">Important information about how your $SUMU is valued, received, its legitimacy, and how we can beat Patreon and make creators millionaires!</p>
               </div>
-              <button className="px-6 py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={() => setShowSumuModal(true)}
+                className="px-6 py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 View $SUMU Guide
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Add modal at the bottom of the component */}
+      <SumuExplainedModal 
+        isOpen={showSumuModal} 
+        onClose={() => setShowSumuModal(false)} 
+      />
     </div>
   );
 } 
