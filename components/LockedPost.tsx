@@ -78,8 +78,8 @@ export default function LockedPost({
           <p className="text-gray-400 mb-4">{date}</p>
 
           {!isSubscribed && (
-            <button className="w-full bg-[#00BF63] hover:bg-[#00EE3F] text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6">
-              <Lock className="w-5 h-5" />
+            <button className="w-full bg-[#00BF63] hover:bg-[#00EE3F] text-white text-xl font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6">
+              <Lock className="w-6 h-6" />
               Join to unlock
             </button>
           )}

@@ -23,22 +23,22 @@ const PriceCard: FC<PriceCardProps> = ({ tiers, isAnnual }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full">
+    <div className="flex flex-col justify-center md:flex-row gap-6 w-full">
       {tiers.map((tier, index) => (
         <div 
           key={index}
-          className={`relative flex flex-col p-6 rounded-xl w-full md:w-1/2 border-2 
+          className={`relative flex flex-col p-6 rounded-xl w-full md:w-5/12 border-2 
             ${tier.isPopular 
               ? 'border-[#4040FF] bg-gray-900'
               : 'border-gray-100 bg-gray-900'}`}
         >
           {tier.isPopular && (
-            <span className="absolute -top-3 right-4 text-[#4040FF] text-sm font-semibold bg-gray-900 px-2">
+            <span className="absolute -top-4 right-4 text-[#4040FF] text-lg font-semibold bg-gray-900 px-2">
               Most Popular
             </span>
           )}
           
-          <h3 className="text-xl text-white font-bold">
+          <h3 className="text-3xl mb-1 text-white font-bold">
             {tier.title}
           </h3>
 
@@ -66,7 +66,7 @@ const PriceCard: FC<PriceCardProps> = ({ tiers, isAnnual }) => {
             )}
           </div>
 
-          <p className="text-gray-300 mt-4">
+          <p className="text-gray-200 font-semibold lg:text-lg mt-4">
             {tier.description}
           </p>
 
@@ -76,12 +76,12 @@ const PriceCard: FC<PriceCardProps> = ({ tiers, isAnnual }) => {
                 <svg className="h-6 w-6 text-[#4040FF] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-gray-300">{feature}</span>
+                <span className="text-gray-200 font-semibold lg:text-lg">{feature}</span>
               </li>
             ))}
           </ul>
 
-          <button className="mt-6 w-full bg-[#4040FF] text-white py-2 px-4 rounded-lg hover:bg-[#3030DD] transition-colors">
+          <button className="mt-6 w-full bg-[#4040FF] text-xl font-semibold text-white py-2 px-4 rounded-lg hover:bg-[#3030DD] transition-colors">
             Join
           </button>
         </div>

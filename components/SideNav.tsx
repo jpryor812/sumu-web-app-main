@@ -85,6 +85,10 @@ export default function SideNav() {
               <BarChart size={20} />
               {!isCollapsed && <span>Stats and Rewards</span>}
             </Link>
+            <Link href="/leaderboard" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
+              <BarChart size={20} />
+              {!isCollapsed && <span>Subscribers (just a list, when they joined, their tier, and an option to message or block them)</span>}
+            </Link>
             <Link href="/referrals" className="flex items-center space-x-3 text-gray-300 hover:text-white px-2">
               <Users size={20} />
               {!isCollapsed && <span>Referrals</span>}

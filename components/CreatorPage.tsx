@@ -53,7 +53,7 @@ export default function CreatorPage() {
           annualPrice: 153, // 15 * 12 * 0.85 rounded
           description: "Everything in Early Access plus exclusive content and personalized perks",
           features: [
-            "All Early Access benefits",
+            "All Big Fan benefits",
             "Custom song requests",
             "Private Discord channel",
             "Monthly virtual meetups"
@@ -101,12 +101,12 @@ export default function CreatorPage() {
                     </div>
                     <div className="flex w-full justify-center flex-col md:flex-row">
                             <div className="flex flex-col">
-                            <div className="text-white text-lg md:text-2xl text-center font-semibold py-2">
+                            <div className="text-white text-lg md:text-2xl lg:text-4xl text-center font-semibold py-2">
                                 <p>
-                                        Alex Dethero
+                                        Alex Dethero (Add single purchase posts somewhere)
                                     </p>
                                 </div>
-                                <div className="text-white text-sm md:text-base font-semibold py-2 px-4 md:px-24 lg:px-48">
+                                <div className="text-gray-300 text-center text-sm md:text-base lg:text-lg font-semibold py-4 px-4 md:px-24 lg:px-72">
                                 <p>
                                         Hi! My name is Alex and I make lo-fi hip hop beats. I started
                                         it as a hobby in 2020, and it turned into a passion. I&apos;ve
@@ -117,74 +117,74 @@ export default function CreatorPage() {
                                     </p>
                                 </div>
                                 
-                                <div className="text-white text-xl font-semibold text-center pb-1">
+                                <div className="text-white text-lg md:text-xl lg:text-2xl font-semibold text-center mt-4 pb-1">
                                     <p>Choose Your Membership</p>
                                 </div>
                                 <div className="flex flex-col items-center justify-center gap-2 py-4">
-                                <div className="flex items-center justify-center gap-4">
-                                    <span className={`text-sm font-semibold ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                                        Monthly
-                                    </span>
-                                    <button
-                                        onClick={() => setIsAnnual(!isAnnual)}
-                                        className="relative w-24 h-6 rounded-full bg-gray-700 focus:outline-none"
-                                    >
-                                        <div
-                                            className={`absolute top-0 w-12 h-6 rounded-full bg-white transform transition-transform duration-200 ease-in-out ${
-                                                isAnnual ? 'translate-x-full' : 'translate-x-0'
-                                            }`}
-                                        />
-                                    </button>
-                                    <div className="flex items-center gap-2">
-                                        <span className={`text-sm font-semibold ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                                            Annual
-                                        </span>
-                                        <span className="text-sm text-gray-300 font-medium">
+                                    <div className="relative w-full flex justify-center">
+                                        <div className="flex items-center">
+                                            <span className={`text-lg font-semibold ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                                                Monthly
+                                            </span>
+                                            <button
+                                                onClick={() => setIsAnnual(!isAnnual)}
+                                                className="relative w-24 h-6 rounded-full bg-gray-700 focus:outline-none mx-4"
+                                            >
+                                                <div
+                                                    className={`absolute top-0 w-12 h-6 rounded-full bg-white transform transition-transform duration-200 ease-in-out ${
+                                                        isAnnual ? 'translate-x-full' : 'translate-x-0'
+                                                    }`}
+                                                />
+                                            </button>
+                                            <span className={`text-lg font-semibold ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                                                Annual
+                                            </span>
+                                        </div>
+                                        <span className="text-sm text-green-300 font-medium absolute top-1 left-[calc(50%+136px)]">
                                             (Save 20%)
                                         </span>
                                     </div>
                                 </div>
+                            <div className="flex flex-col md:flex-row justify-between w-full px-16">
+                              {/* Left testimonial */}
+                              <div className="w-72 pl-6 flex flex-col">
+                                <div className="flex flex-col items-center w-full">
+                                  <Image
+                                    src="/profile_picture.jpg"
+                                    alt="LucyLooWho"
+                                    width={36}
+                                    height={36}
+                                    className="rounded-full mb-2"
+                                  />
+                                  <span className="text-white text-center font-semibold mb-2">LucyLooWho</span>
+                                </div>
+                                <p className="text-white text-center text-lg italic">
+                                  "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
+                                </p>
+                              </div>
+
+                              {/* Price cards container */}
+                              <div className="flex flex-col md:flex-row">
+                                <PriceCard tiers={priceTiers} isAnnual={isAnnual} />
+                              </div>
+
+                              {/* Right testimonial */}
+                              <div className="w-72 pr-6 flex flex-col">
+                                <div className="flex flex-col items-center w-full">
+                                  <Image
+                                    src="/puja_picture.png"
+                                    alt="LucyLooWho"
+                                    width={36}
+                                    height={36}
+                                    className="rounded-full mb-2"
+                                  />
+                                  <span className="text-white text-center font-semibold mb-2">Pujaaaa</span>
+                                </div>
+                                <p className="text-white text-center text-lg italic">
+                                  "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
+                                </p>
+                              </div>
                             </div>
-                            <div className="flex flex-col md:flex-row justify-between w-full px-8">
-  {/* Left testimonial */}
-  <div className="w-72 px-4 flex flex-col">
-    <div className="flex flex-col items-center w-full">
-      <Image
-        src="/profile_picture.jpg"
-        alt="LucyLooWho"
-        width={36}
-        height={36}
-        className="rounded-full mb-2"
-      />
-      <span className="text-white text-center font-semibold mb-2">LucyLooWho</span>
-    </div>
-    <p className="text-white text-center text-sm italic">
-      "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
-    </p>
-  </div>
-
-  {/* Price cards container */}
-  <div className="flex flex-col md:flex-row gap-6 mx-4">
-    <PriceCard tiers={priceTiers} isAnnual={isAnnual} />
-  </div>
-
-  {/* Right testimonial */}
-  <div className="w-72 px-4 flex flex-col">
-    <div className="flex flex-col items-center w-full">
-      <Image
-        src="/puja_picture.png"
-        alt="LucyLooWho"
-        width={36}
-        height={36}
-        className="rounded-full mb-2"
-      />
-      <span className="text-white text-center font-semibold mb-2">Pujaaaa</span>
-    </div>
-    <p className="text-white text-center text-sm italic">
-      "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
-    </p>
-  </div>
-</div>
                                 <div className="flex justify-center w-full pt-4">
                                     <div className="flex items-center justify-between bg-[#4040FF] rounded-full p-1 w-80">
                                         <span className="text-white font-semibold px-4 py-2">Share with a friend</span>
