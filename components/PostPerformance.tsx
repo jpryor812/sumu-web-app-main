@@ -118,18 +118,18 @@ export default function PostPerformance() {
     };
 
     return (
-      <div className="bg-gray-800 mb-6 rounded-xl p-6 shadow-lg">
-        <div className="grid grid-cols-3 items-center mb-6">
+      <div className="bg-gray-800 mb-6 rounded-xl px-6 py-4 shadow-lg">
+        <div className="grid grid-cols-3 items-center mb-2">
           {/* Left: Post Performance Title */}
           <div className="justify-self-start">
-            <h2 className="text-2xl font-bold">Post Performance</h2>
+            <h2 className="text-xl font-bold">Post Performance</h2>
           </div>
           
           {/* Center: Toggle between Most Viewed and Most Recent */}
           <div className="justify-self-center">
             <div className="bg-gray-700 rounded-lg p-1 flex">
               <button 
-                className={`py-2 px-4 rounded-md text-md font-semibold transition-colors ${
+                className={`py-2 px-3 rounded-md text-sm font-semibold transition-colors ${
                   postView === 'mostViewed' 
                     ? 'bg-blue-600 text-white' 
                     : 'text-gray-300 hover:bg-gray-600'
@@ -139,7 +139,7 @@ export default function PostPerformance() {
                 Most Viewed
               </button>
               <button 
-                className={`py-2 px-4 rounded-md text-md font-semibold transition-colors ${
+                className={`py-2 px-3 rounded-md text-sm font-semibold transition-colors ${
                   postView === 'mostRecent' 
                     ? 'bg-blue-600 text-white' 
                     : 'text-gray-300 hover:bg-gray-600'
@@ -186,13 +186,13 @@ export default function PostPerformance() {
                   <div key={index} className="w-1/4 flex-shrink-0 px-2">
                     <div className="bg-gray-700 rounded-lg p-4 h-full flex flex-col">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg truncate pr-2">{post.title}</h3>
+                        <h3 className="font-semibold text-md truncate pr-2">{post.title}</h3>
                         <div className="flex items-center bg-gray-600 px-2 py-1 rounded">
                           <span className="text-sm font-medium">{post.views.toLocaleString()}</span>
                           <span className="ml-1 text-sm text-gray-400">views</span>
                         </div>
                       </div>
-                      <p className="text-gray-400 text-md mb-3 line-clamp-2">{post.excerpt}</p>
+                      <p className="text-gray-400 text-sm mb-3 line-clamp-2">{post.excerpt}</p>
                       
                       {/* Post Image */}
                       <div className="relative h-36 w-full mb-3 rounded-md overflow-hidden">

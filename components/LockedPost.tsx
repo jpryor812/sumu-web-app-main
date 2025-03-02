@@ -50,9 +50,9 @@ export default function LockedPost({
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div className="relative transition-transform duration-500 transform group-hover:-translate-y-4">
                 {isHovered ? (
-                  <UnlockKeyhole className="w-48 h-48 transition-opacity duration-500" />
+                  <UnlockKeyhole className="w-40 h-40 transition-opacity duration-500" />
                 ) : (
-                  <Lock className="w-48 h-48 transition-opacity duration-500" />
+                  <Lock className="w-40 h-40 transition-opacity duration-500" />
                 )}
               </div>
               <button 
@@ -60,7 +60,7 @@ export default function LockedPost({
                   transition-all duration-500 transform
                   ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
                   px-6 py-3 bg-[#4040FF] backdrop-blur-sm rounded-full
-                  hover:bg-[#00BBFF] text-3xl font-semibold text-white mt-4
+                  hover:bg-[#00BBFF] text-2xl font-semibold text-white mt-4
                   border border-white/20 shadow-lg
                   flex items-center gap-2
                 `}

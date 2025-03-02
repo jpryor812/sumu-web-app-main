@@ -101,12 +101,12 @@ export default function CreatorPage() {
                     </div>
                     <div className="flex w-full justify-center flex-col md:flex-row">
                             <div className="flex flex-col">
-                            <div className="text-white text-lg md:text-2xl lg:text-4xl text-center font-semibold py-2">
+                            <div className="text-white text-lg md:text-2xl lg:text-3xl text-center font-semibold py-2">
                                 <p>
-                                        Alex Dethero (Add single purchase posts somewhere)
+                                        Alex Dethero
                                     </p>
                                 </div>
-                                <div className="text-gray-300 text-center text-sm md:text-base lg:text-lg font-semibold py-4 px-4 md:px-24 lg:px-72">
+                                <div className="text-gray-300 text-center text-sm md:text-base lg:text-md italic font-semibold pb-4 px-8 md:px-24 lg:px-36">
                                 <p>
                                         Hi! My name is Alex and I make lo-fi hip hop beats. I started
                                         it as a hobby in 2020, and it turned into a passion. I&apos;ve
@@ -117,13 +117,13 @@ export default function CreatorPage() {
                                     </p>
                                 </div>
                                 
-                                <div className="text-white text-lg md:text-xl lg:text-2xl font-semibold text-center mt-4 pb-1">
+                                <div className="text-white text-lg md:text-xl lg:text-xl font-semibold text-center mt-4 pb-1">
                                     <p>Choose Your Membership</p>
                                 </div>
                                 <div className="flex flex-col items-center justify-center gap-2 py-4">
                                     <div className="relative w-full flex justify-center">
                                         <div className="flex items-center">
-                                            <span className={`text-lg font-semibold ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                                            <span className={`text-md font-semibold ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
                                                 Monthly
                                             </span>
                                             <button
@@ -136,29 +136,29 @@ export default function CreatorPage() {
                                                     }`}
                                                 />
                                             </button>
-                                            <span className={`text-lg font-semibold ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                                            <span className={`text-md font-semibold ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
                                                 Annual
                                             </span>
                                         </div>
-                                        <span className="text-sm text-green-300 font-medium absolute top-1 left-[calc(50%+136px)]">
+                                        <span className="text-xs text-green-300 font-medium absolute top-1 left-[calc(50%+128px)]">
                                             (Save 20%)
                                         </span>
                                     </div>
                                 </div>
-                            <div className="flex flex-col md:flex-row justify-between w-full px-16">
+                            <div className="flex flex-col md:flex-row justify-between w-full px-12">
                               {/* Left testimonial */}
-                              <div className="w-72 pl-6 flex flex-col">
+                              <div className="w-72 pl-2 flex flex-col">
                                 <div className="flex flex-col items-center w-full">
                                   <Image
-                                    src="/profile_picture.jpg"
+                                    src="/alex-profile.png"
                                     alt="LucyLooWho"
                                     width={36}
                                     height={36}
                                     className="rounded-full mb-2"
                                   />
-                                  <span className="text-white text-center font-semibold mb-2">LucyLooWho</span>
+                                  <span className="text-white text-center font-semibold mb-2">Mike Smith</span>
                                 </div>
-                                <p className="text-white text-center text-lg italic">
+                                <p className="text-white text-center text-sm italic">
                                   "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
                                 </p>
                               </div>
@@ -169,7 +169,7 @@ export default function CreatorPage() {
                               </div>
 
                               {/* Right testimonial */}
-                              <div className="w-72 pr-6 flex flex-col">
+                              <div className="w-72 pr-2 flex flex-col">
                                 <div className="flex flex-col items-center w-full">
                                   <Image
                                     src="/puja_picture.png"
@@ -178,9 +178,9 @@ export default function CreatorPage() {
                                     height={36}
                                     className="rounded-full mb-2"
                                   />
-                                  <span className="text-white text-center font-semibold mb-2">Pujaaaa</span>
+                                  <span className="text-white text-center font-semibold mb-2">Pujaaa</span>
                                 </div>
-                                <p className="text-white text-center text-lg italic">
+                                <p className="text-white text-center text-sm italic">
                                   "I love this channel so much! Alex's music is so good. I listen to it basically daily, and the live sessions of him making music are so cool to see"
                                 </p>
                               </div>

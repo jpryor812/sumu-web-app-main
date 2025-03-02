@@ -51,19 +51,19 @@ export default function SumuOwnership({
   
   return (
     <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Your $SUMU Ownership</h2>
+      <h2 className="text-xl font-bold mb-4">Your $SUMU Ownership</h2>
       
       {/* SUMU Balance Display */}
       <div className="bg-gray-700 rounded-lg p-5 mb-6">
         <div className="flex justify-between items-center mb-2">
-          <p className="text-gray-400 text-lg font-semibold">Your $SUMU Balance</p>
+          <p className="text-gray-400 text-md font-semibold">Your $SUMU Balance</p>
           <div className="flex flex-row items-end">
             <div className="flex flex-row items-center">
-              <span className="text-2xl text-white font-bold">{userSumuBalance.toLocaleString()}</span>
-              <span className="ml-2 text-md text-gray-400">$SUMU</span>
+              <span className="text-xl text-white font-bold">{userSumuBalance.toLocaleString()}</span>
+              <span className="ml-2 text-sm text-gray-400">$SUMU</span>
             </div>
             {balanceIncrease > 0 && (
-              <div className="flex items-center text-green-400 text-sm mt-1">
+              <div className="flex items-center text-green-400 text-xs mt-1">
                 <ArrowUpRight size={14} className="mr-1" />
                 <span>+{balanceIncrease.toLocaleString()} (+{balanceIncreasePercentage.toFixed(1)}%) MoM</span>
               </div>
@@ -71,11 +71,11 @@ export default function SumuOwnership({
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-gray-400 text-lg font-semibold">Ownership</p>
+          <p className="text-gray-400 text-md font-semibold">Ownership</p>
           <div className="flex flex-row items-end">
-            <p className="text-lg font-semibold">{percentageOfSupply.toFixed(4)}%</p>
+            <p className="text-md font-semibold">{percentageOfSupply.toFixed(4)}%</p>
             {percentageIncrease > 0 && (
-              <div className="flex items-center text-green-400 text-sm mt-1">
+              <div className="flex items-center text-green-400 text-xs mt-1">
                 <ArrowUpRight size={14} className="mr-1" />
                 <span>+{percentageIncrease.toFixed(4)}%</span>
               </div>
@@ -87,8 +87,8 @@ export default function SumuOwnership({
       {/* Valuation Selector */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-6">
-          <p className="text-gray-400 text-xl font-semibold">Company Valuation</p>
-          <p className="text-xl font-semibold text-green-400">{selectedValuation.label}</p>
+          <p className="text-gray-400 text-md font-semibold">Company Valuation</p>
+          <p className="text-md font-semibold text-green-400">{selectedValuation.label}</p>
         </div>
         
         <div className="relative mb-8">
@@ -141,11 +141,11 @@ export default function SumuOwnership({
       <div className="bg-gray-700 mt-12 rounded-lg p-5">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <p className="text-gray-400 text-lg font-semibold">Your $SUMU Value</p>
-            <p className="text-md text-gray-500">At {selectedValuation.label} valuation</p>
+            <p className="text-gray-400 text-md font-semibold">Your $SUMU Value</p>
+            <p className="text-sm text-gray-500">At {selectedValuation.label} valuation</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl text-green-400 font-bold">${sumuValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+            <p className="text-xl text-green-400 font-bold">${sumuValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
             {selectedValuation.value > 0 && (
               <p className="text-sm text-gray-400">${(sumuValue / userSumuBalance).toFixed(2)} per $SUMU</p>
             )}

@@ -5,11 +5,11 @@ import { MessageCircle, HeartIcon, Repeat2 } from "lucide-react";
 
 export default function SocialFeed() {
   return (
-    <div className="w-1/2 mx-auto">
+    <div className="mx-auto">
       {/* First Post */}
       <div className="mb-6">
-        <div className="bg-black border-gray-500 border-2 rounded-2xl w-full">
-          <div className="flex items-center gap-3 p-4">
+        <div className="bg-black border-gray-800 border-2 rounded-2xl w-full">
+          <div className="flex items-center gap-3 p-3">
             <Image
               src="/alex-profile.png"
               alt="alex Album Cover"
@@ -26,7 +26,7 @@ export default function SocialFeed() {
           </div>
 
           <div className="px-4 pb-2">
-            <p className="sm:text-md text-sm font-semibold text-gray-200">
+            <p className=" sm:text-md font-semibold text-gray-200">
               Listened to some classic jazz at work today and I&apos;m feeling creative.
               Surprise live music making session tonight at 8:00pm est. for all of
               my fans! Looking forward to chatting with you all and making some
@@ -34,8 +34,8 @@ export default function SocialFeed() {
             </p>
           </div>
 
-          <div className="px-6 py-2">
-            <div className="relative w-full aspect-[3/1]">
+          <div className="px-4 py-2">
+            <div className="relative w-full aspect-[2/1]">
               <Image
                 src="/alex-tweet-image.png"
                 alt="alex post image"
@@ -64,7 +64,7 @@ export default function SocialFeed() {
 
       {/* Second Post */}
       <div className="mb-6">
-        <div className="bg-black border-gray-500 border-2 rounded-2xl w-full">
+        <div className="bg-black border-gray-800 border-2 rounded-2xl w-full">
           <div className="flex items-center gap-3 p-4">
             <Image
               src="/profile_picture.jpg"
@@ -89,7 +89,7 @@ export default function SocialFeed() {
           </div>
 
           <div className="px-6 py-2">
-            <div className="relative w-full aspect-[3/1]">
+            <div className="relative w-full aspect-[2/1]">
               <Image
                 src="/Daytrade-chart.png"
                 alt="Daytrade chart image"
@@ -118,7 +118,7 @@ export default function SocialFeed() {
 
       {/* Third Post */}
       <div className="mb-6">
-        <div className="bg-black border-gray-500 border-2 rounded-2xl w-full">
+        <div className="bg-black border-gray-800 border-2 rounded-2xl w-full">
           <div className="flex items-center gap-3 p-4">
             <Image
               src="/profile-800x800.png"
@@ -143,7 +143,7 @@ export default function SocialFeed() {
           </div>
 
           <div className="px-6 py-2">
-            <div className="relative w-full aspect-[3/1]">
+            <div className="relative w-full aspect-[2/1]">
               <Image
                 src="/amsterdam.jpeg"
                 alt="amsterdam"

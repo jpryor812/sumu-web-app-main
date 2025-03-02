@@ -8,6 +8,7 @@ import SubscriberGrowthChart from '@/components/SubscriberGrowthChart';
 import PostPerformance from '@/components/PostPerformance';
 import SumuOwnership from './SumuOwnership';
 import SumuExplainedModal from '@/components/SumuExplained';
+import RevenueChart from './RevenueChart';
 // Enhanced mock data with weekly and monthly timeframes only
 
 const userSumuBalance = 1280;
@@ -34,9 +35,9 @@ const creatorStats = {
     ownershipPercentage: 0.0042
   },
   revenue: {
-    total: 7547.65,
-    thisMonth: 1447.89,
-    growthPercentage: 19.4
+    total: 16726,
+    thisMonth: 4162,
+    growthPercentage: 17.8
   },
 };
 
@@ -95,7 +96,7 @@ export default function CreatorDashboard() {
       <div className="p-6 flex-1 min-h-screen ml-16 md:ml-64 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <div className="relative h-16 w-16 mr-4">
                 <Image
@@ -106,15 +107,15 @@ export default function CreatorDashboard() {
                 />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">{creatorStats.name}</h1>
-                <p className="text-gray-400">Creator since November 2024</p>
+                <h1 className="text-2xl font-bold text-white">{creatorStats.name}</h1>
+                <p className="text-sm text-gray-400">Creator since November 2024</p>
               </div>
             </div>
             <div className="flex space-x-4">
-              <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors text-white">
+              <button className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded-lg transition-colors text-sm text-white">
                 Share Dashboard
               </button>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-white">
+              <button className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm text-white">
                 Export Data
               </button>
             </div>
@@ -122,61 +123,61 @@ export default function CreatorDashboard() {
           
           {/* Main Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-xl px-6 py-4 shadow-lg">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-300">Total Fans</h3>
+                  <h3 className="text-lg font-semibold text-gray-300">Total Fans</h3>
                   <div className="flex items-center mt-2">
-                    <span className="text-4xl font-bold text-white">{creatorStats.subscribers.total.toLocaleString()}</span>
+                    <span className="text-3xl font-bold text-white">{creatorStats.subscribers.total.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center mt-2">
-                    <ArrowUp size={20} className="text-green-500 mr-1" />
-                    <span className="text-green-500 font-semibold">+{newSubscribers} this {timeframe === 'weekly' ? 'week' : 'month'}</span>
+                    <ArrowUp size={18} className="text-green-500 mr-1" />
+                    <span className="text-sm text-green-500 font-semibold">+{newSubscribers} this {timeframe === 'weekly' ? 'week' : 'month'}</span>
                   </div>
                 </div>
                 <div className="bg-green-500 bg-opacity-20 rounded-full p-3">
-                  <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-xl px-6 py-4 shadow-lg">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-300">USDC Rewards</h3>
+                  <h3 className="text-lg font-semibold text-gray-300">USDC Rewards</h3>
                   <div className="flex items-center mt-2">
-                    <span className="text-4xl font-bold text-white">{creatorStats.rewards.totalUSDC.toLocaleString()} USDC</span>
+                    <span className="text-3xl font-bold text-white">{creatorStats.rewards.totalUSDC.toLocaleString()} USDC</span>
                   </div>
                   <div className="flex items-center mt-2">
                     <span className="text-blue-400 font-semibold">Projected Monthly Rewards: {creatorStats.rewards.pendingUSDC}</span>
                   </div>
                 </div>
-                <div className="bg-blue-500 bg-opacity-60 rounded-full p-3">
+                <div className="bg-blue-500 bg-opacity-60 rounded-full p-2">
                   <span className="text-5xl">💰</span>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-xl px-6 py-4 shadow-lg">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-300">$SUMU Rewards</h3>
+                  <h3 className="text-lg font-semibold text-gray-300">$SUMU Rewards</h3>
                   <div className="flex items-center mt-2">
-                    <span className="text-4xl font-bold text-white">{creatorStats.rewards.totalSUMU.toLocaleString()}</span>
+                    <span className="text-3xl font-bold text-white">{creatorStats.rewards.totalSUMU.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center mt-2">
                     <span className="text-green-400 font-semibold">Projected Monthly Rewards: {creatorStats.rewards.pendingSUMU}</span>
                   </div>
                 </div>
                 <div className="bg-green-500 bg-opacity-20 rounded-full p-2">
-                  <div className="relative w-14 h-14">
+                  <div className="relative w-12 h-12">
                     <Image 
                       src="/sumu-vert-square.png" 
                       alt="SUMU Token" 
                       fill 
-                      className="object-contain w-12 h-12 rounded-full"
+                      className="object-contain w-10 h-10 rounded-full"
                     />
                   </div>
                 </div>
@@ -187,16 +188,16 @@ export default function CreatorDashboard() {
           {/* Subscriber Growth Chart */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-white">Fan Growth</h2>
+              <h2 className="text-xl font-bold text-white">Fan Growth</h2>
               <div className="flex space-x-2">
                 <button 
-                  className={`px-3 py-1 rounded-md text-white ${timeframe === 'weekly' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  className={`px-2 py-1 text-sm rounded-md text-white ${timeframe === 'weekly' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   onClick={() => setTimeframe('weekly')}
                 >
                   Weekly
                 </button>
                 <button 
-                  className={`px-3 py-1 rounded-md text-white ${timeframe === 'monthly' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  className={`px-2 py-1 text-sm rounded-md text-white ${timeframe === 'monthly' ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   onClick={() => setTimeframe('monthly')}
                 >
                   Monthly
@@ -205,18 +206,18 @@ export default function CreatorDashboard() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg px-4 py-2">
                 <p className="text-gray-400">Total Fans</p>
-                <p className="text-3xl font-bold text-white">{creatorStats.subscribers.total.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-white">{creatorStats.subscribers.total.toLocaleString()}</p>
               </div>
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg px-4 py-2">
                 <p className="text-gray-400">New Fans This {timeframe === 'weekly' ? 'Week' : 'Month'}</p>
-                <p className="text-3xl font-bold text-white">{newSubscribers}</p>
+                <p className="text-2xl font-bold text-white">{newSubscribers}</p>
               </div>
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg px-4 py-2">
                 <p className="text-gray-400">{timeframe === 'weekly' ? 'Weekly' : 'Monthly'} Growth</p>
                 <div className="flex items-center">
-                  <p className="text-3xl font-bold text-green-400">{growthPercentage}%</p>
+                  <p className="text-2xl font-bold text-green-400">{growthPercentage}%</p>
                   <ArrowUp size={24} className="text-green-500 ml-2" />
                 </div>
               </div>
@@ -229,24 +230,24 @@ export default function CreatorDashboard() {
           
           {/* Second Row - Revenue and Platform Ownership */}
             {/* Revenue Section */}
-            <div className="bg-gray-800 mb-6 rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-t-xl p-6 shadow-lg">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Revenue</h2>
+                <h2 className="text-xl font-bold">Revenue</h2>
                 <h2 className="text-2xl font-bold">Subscription Tiers</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left side - Revenue stats */}
                 <div className="flex flex-col">
                   <div className="bg-gray-700 rounded-lg p-4 mb-4 flex-1">
-                    <p className="text-gray-400">Total Revenue</p>
-                    <p className="text-3xl font-bold">${creatorStats.revenue.total.toLocaleString()}</p>
+                    <p className="text-sm text-gray-400">Total Revenue</p>
+                    <p className="text-2xl font-bold">${creatorStats.revenue.total.toLocaleString()}</p>
                   </div>
                   <div className="bg-gray-700 rounded-lg p-4 flex-1">
-                    <p className="text-gray-400">This Month</p>
+                    <p className="text-sm text-gray-400">This Month</p>
                     <div className="flex items-center">
-                      <p className="text-3xl font-bold">${creatorStats.revenue.thisMonth.toLocaleString()}</p>
+                      <p className="text-2xl font-bold">${creatorStats.revenue.thisMonth.toLocaleString()}</p>
                       <div className="flex items-center ml-3">
-                        <span className="text-green-500 font-semibold">+{creatorStats.revenue.growthPercentage}% MoM</span>
+                        <span className="text-green-500 font-semibold text-sm">+{creatorStats.revenue.growthPercentage}% MoM</span>
                         <ArrowUp size={16} className="text-green-500 ml-1" />
                       </div>
                     </div>
@@ -258,7 +259,7 @@ export default function CreatorDashboard() {
                   <div className="bg-gray-700 rounded-lg p-1 mb-4">
                     <div className="flex">
                       <button 
-                        className={`flex-1 py-2 px-3 rounded-md text-md font-semibold transition-colors ${
+                        className={`flex-1 py-1.5 px-2 rounded-md text-sm font-semibold transition-colors ${
                           activeSubscription === 'basic' 
                             ? 'bg-blue-600 text-white' 
                             : 'text-gray-300 hover:bg-gray-600'
@@ -268,7 +269,7 @@ export default function CreatorDashboard() {
                         Basic ($5)
                       </button>
                       <button 
-                        className={`flex-1 py-2 px-3 rounded-md text-md font-semibold transition-colors ${
+                        className={`flex-1 py-1.5 px-2 rounded-md text-sm font-semibold transition-colors ${
                           activeSubscription === 'premium' 
                             ? 'bg-blue-600 text-white' 
                             : 'text-gray-300 hover:bg-gray-600'
@@ -278,7 +279,7 @@ export default function CreatorDashboard() {
                         Premium ($10)
                       </button>
                       <button 
-                        className={`flex-1 py-2 px-3 rounded-md text-md font-semibold transition-colors ${
+                        className={`flex-1 py-1.5 px-2 rounded-md text-sm font-semibold transition-colors ${
                           activeSubscription === 'platinum' 
                             ? 'bg-blue-600 text-white' 
                             : 'text-gray-300 hover:bg-gray-600'
@@ -298,28 +299,28 @@ export default function CreatorDashboard() {
                         // Define subscription data with change metrics
                         const subscriptionData = {
                           basic: { 
-                            subscribers: 142, 
+                            subscribers: 284, 
                             subscribersChange: 8,
-                            revenue: 710, 
+                            revenue: 1420, 
                             revenueChangePercent: 6.2,  // Changed to percentage
-                            percentage: 48, 
-                            percentageChange: 2.5
+                            percentage: 8.5, 
+                            percentageChange: 4.5
                           },
                           premium: { 
-                            subscribers: 68, 
+                            subscribers: 184, 
                             subscribersChange: 12,
-                            revenue: 680, 
-                            revenueChangePercent: 21.4,  // Changed to percentage
-                            percentage: 36, 
-                            percentageChange: 4.2
+                            revenue: 1840, 
+                            revenueChangePercent: 7.4,  // Changed to percentage
+                            percentage: 10.5, 
+                            percentageChange: 7.2
                           },
                           platinum: { 
-                            subscribers: 12, 
+                            subscribers: 50, 
                             subscribersChange: 3,
-                            revenue: 300, 
-                            revenueChangePercent: 33.3,  // Changed to percentage
-                            percentage: 16, 
-                            percentageChange: 1.8
+                            revenue: 1250, 
+                            revenueChangePercent: 8.3,  // Changed to percentage
+                            percentage: 16.5, 
+                            percentageChange: 4.8
                           }
                         };
                         
@@ -346,23 +347,23 @@ export default function CreatorDashboard() {
                         return (
                           <>
                             <div className="flex justify-between mb-3">
-                              <p className="text-lg text-gray-300">Subscribers</p>
+                              <p className="text-base text-gray-300">Subscribers</p>
                               <div className="flex items-center">
-                                <p className="font-bold text-lg">{currentData.subscribers}</p>
+                                <p className="font-bold text-base">{currentData.subscribers}</p>
                                 {renderChange(currentData.subscribersChange)}
                               </div>
                             </div>
                             <div className="flex justify-between mb-3">
-                              <p className="text-lg text-gray-300">Monthly Revenue</p>
+                              <p className="text-base text-gray-300">Monthly Revenue</p>
                               <div className="flex items-center">
-                                <p className="font-bold text-lg">${currentData.revenue}</p>
+                                <p className="font-bold text-base">${currentData.revenue}</p>
                                 {renderChange(currentData.revenueChangePercent, true)}
                               </div>
                             </div>
                             <div className="flex justify-between">
-                              <p className="text-lg text-gray-300">% of Total Revenue</p>
+                              <p className="text-base text-gray-300">% of Total Revenue</p>
                               <div className="flex items-center">
-                                <p className="font-bold text-lg">{currentData.percentage}%</p>
+                                <p className="font-bold text-base">{currentData.percentage}%</p>
                                 {renderChange(currentData.percentageChange, true)}
                               </div>
                             </div>
@@ -374,6 +375,9 @@ export default function CreatorDashboard() {
                 </div>
               </div>
             </div>
+            <div className="bg-gray-800 mb-6 rounded-b-xl p-6 shadow-lg">
+            <RevenueChart />
+            </div>
 
             <PostPerformance />
             
@@ -384,8 +388,8 @@ export default function CreatorDashboard() {
           <div className="bg-gradient-to-r mt-4 from-blue-600 to-green-600 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold mb-2">More About Your $SUMU Ownership</h2>
-                <p className="text-white opacity-90 max-w-xl">Important information about how your $SUMU is valued, received, its legitimacy, and how we can beat Patreon and make creators millionaires!</p>
+                <h2 className="text-xl font-bold mb-2">More About Your $SUMU Ownership</h2>
+                <p className="text-sm text-white opacity-90 max-w-xl">Important information about how your $SUMU is valued, received, its legitimacy, and how we can beat Patreon and make creators millionaires!</p>
               </div>
               <button 
                 onClick={() => setShowSumuModal(true)}

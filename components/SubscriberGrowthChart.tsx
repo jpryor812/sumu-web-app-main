@@ -73,7 +73,7 @@ const SubscriberChart: React.FC = () => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-gray-800 text-white p-3 rounded-md shadow-lg">
-          <p className="text-2xl font-bold text-center">{payload[0].value}</p>
+          <p className="text-lg font-bold text-center">{payload[0].value}</p>
           <p className="text-xs text-center">SUBSCRIBERS - {payload[0].payload.date.toUpperCase()}</p>
         </div>
       );
@@ -113,7 +113,7 @@ const SubscriberChart: React.FC = () => {
               dataKey="date" 
               axisLine={{ stroke: "#2D3748" }} 
               tickLine={false}
-              tick={{ fill: '#A0AEC0' }}
+              tick={{ fill: '#A0AEC0', fontSize: 14 }}
               padding={{ left: 0, right: 0 }}
               ticks={[data[0].date, data[7].date, data[14].date, data[21].date, data[27].date]}
             />
@@ -121,7 +121,7 @@ const SubscriberChart: React.FC = () => {
             <YAxis 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#A0AEC0' }}
+              tick={{ fill: '#A0AEC0', fontSize: 14 }}
               domain={[0, 310]}
               ticks={[0, 100, 200, 300]}
               padding={{ top: 10, bottom: 0 }}

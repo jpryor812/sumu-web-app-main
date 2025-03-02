@@ -11,6 +11,7 @@ type Post = {
   creatorImage: string;
   title: string;
   date: string;
+  category: string;
 }
 
 const POSTS_PER_PAGE = 4;
@@ -22,44 +23,50 @@ export default function NewPostsHome() {
     const posts: Post[] = [
         {
             id: 1,
-            postImage: "/payment-blog-header.png",
+            postImage: "/Daytrade-chart.png",
             creatorName: "Just-in Trades",
             creatorImage: "/profile_picture.jpg",
-            title: "Why You Should Use USDC",
-            date: "8:46am"
+            title: "How I just doubled my profit in one month",
+            date: "8:46am",
+            category: "Finance"
         },
         {
             id: 2,
-            postImage: "/payment-blog-header.png",
-            creatorName: "Just-in Trades",
-            creatorImage: "/profile_picture.jpg",
-            title: "Why You Should Use USDC",
-            date: "8:56am"
+            postImage: "/more-or-less-3.png",
+            creatorName: "Alex Dethero",
+            creatorImage: "/alex-profile.png",
+            title: "NEW ALBUM OUT!",
+            date: "8:56am",
+            category: "Music"
         },
         {
             id: 3,
-            postImage: "/payment-blog-header.png",
-            creatorName: "Just-in Trades",
-            creatorImage: "/profile_picture.jpg",   
-            title: "Why You Should Use USDC",
-            date: "9:46am"
+            postImage: "/digital-art-background.png",
+            creatorName: "Ani-Mae",
+            creatorImage: "/photo-5.jpg",
+            title: "New characters coming soon...",
+            date: "10:46am",
+            category: "Art"
         },
         {
             id: 4,
-            postImage: "/payment-blog-header.png",
-            creatorName: "Just-in Trades",
-            creatorImage: "/profile_picture.jpg",
-            title: "Why You Should Use USDC",
-            date: "9:49am"
+            postImage: "/amsterdam.jpeg",
+            creatorName: "Life Through Lenses",
+            creatorImage: "/profile-800x800.png",
+            title: "My trip in Amsterdam",
+            date: "9:49am",
+            category: "Art"
         },
         {
             id: 5,
             postImage: "/payment-blog-header.png",
-            creatorName: "Tony",
-            creatorImage: "/profile_picture.jpg",
-            title: "Why You Should Use USDC",
-            date: "10:46am"
-        }
+            creatorName: "Blockchain Bobby",
+            creatorImage: "/profile2-500x500.png",   
+            title: "Here come stablecoins...",
+            date: "9:46am",
+            category: "Technology"
+        },
+
     ];
 
     const canScrollLeft = currentIndex > 0;
@@ -103,7 +110,7 @@ export default function NewPostsHome() {
                         >
                             <div className="rounded-lg overflow-hidden relative">
                                 {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-900/70 to-green-700/90 z-10" />
+                                <div className="absolute inset-0 border-white border-2 shadow-lg rounded-lg" />
                                 
                                 {/* Post Image */}
                                 <div className="relative h-48 w-full">
@@ -116,7 +123,7 @@ export default function NewPostsHome() {
                                 </div>
                                 
                                 {/* Content - now positioned over the gradient */}
-                                <div className="p-4 relative z-20">
+                                <div className="px-4 py-2 bg-gray-900 relative z-20">
                                     {/* Creator Info */}
                                     <div className="flex items-center space-x-2 mb-4">
                                         <div className="relative w-8 h-8">
@@ -131,8 +138,17 @@ export default function NewPostsHome() {
                                     </div>
                                     
                                     {/* Post Info */}
-                                    <h3 className="text-white font-semibold">{post.title}</h3>
-                                    <p className="text-gray-400 font-semibold text-sm">{post.date}</p>
+                                    <h3 className="text-white font-semibold text-sm truncate">
+                                        {post.title}
+                                    </h3>
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-gray-400 font-semibold text-xs">
+                                            {post.date}
+                                        </p>
+                                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-800 text-gray-300">
+                                            {post.category}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

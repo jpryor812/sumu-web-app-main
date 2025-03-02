@@ -11,32 +11,33 @@ export type Creator = {
   trend?: 'up' | 'down' | 'neutral';
 };
 
+// Add this at the top with other imports
+
+
+// Helper function to get random image
+
+
 // Helper function to generate random data
-const generateRandomData = (
+const generateCreator = (
   name: string, 
+  profileImage: string,
   id: string, 
-  subscriberRange: [number, number],
+  subscribersStart: number,
+  subscribersNow: number,
   rank?: number,
   trend?: 'up' | 'down' | 'neutral'
 ): Creator => {
-  // Generate subscribers within the given range
-  const subscribersNow = Math.floor(Math.random() * (subscriberRange[1] - subscriberRange[0])) + subscriberRange[0];
-  
-  // Calculate starting subscribers (10-30% less than current)
-  const reductionPercent = Math.random() * 0.2 + 0.1; // 10-30%
-  const subscribersStart = Math.floor(subscribersNow * (1 - reductionPercent));
-  
-  // Calculate growth percentage
   const growthPercentage = ((subscribersNow - subscribersStart) / subscribersStart) * 100;
   
-  // Calculate projected rewards based on growth
-  const projectedUSDC = growthPercentage * 2.5 + Math.random() * 50; // Example formula
-  const projectedSUMU = growthPercentage * 10 + Math.random() * 200; // Example formula
+  // Base rewards on both growth and current subscriber count
+  const baseMultiplier = subscribersNow > 150 ? 3 : subscribersNow > 50 ? 2 : 1;
+  const projectedUSDC = growthPercentage * baseMultiplier;
+  const projectedSUMU = subscribersNow * baseMultiplier *2; // More SUMU for higher sub count
   
   return {
     id,
     name,
-    profileImage: "/puja_picture.png", // Same image for all creators
+    profileImage,
     subscribersStart,
     subscribersNow,
     growthPercentage,
@@ -49,47 +50,29 @@ const generateRandomData = (
 
 // Tier 1: 1-50 subscribers
 export const tier1Creators: Creator[] = [
-  generateRandomData("Emma Johnson", "1001", [30, 50], 12, 'up'),
-  generateRandomData("Michael Chen", "1002", [20, 40], 15, 'down'),
-  generateRandomData("Sophia Rodriguez", "1003", [35, 50], 17, 'up'),
-  generateRandomData("Noah Williams", "1004", [15, 30], 21, 'neutral'),
-  generateRandomData("Olivia Martinez", "1005", [40, 50], 23, 'up'),
+  generateCreator("Emma Johnson", "/puja_picture.png", "1001", 25, 42, 12, 'up'),
+  generateCreator("Michael Chen", "/profile_picture.jpg", "1002", 15, 26, 15, 'down'),
+  generateCreator("Sophia Rodriguez", "/photo-1.jpeg", "1003", 29, 42, 17, 'up'),
+  generateCreator("Noah Williams", "/photo-6.jpg", "1004", 12, 18, 21, 'neutral'),
+  generateCreator("Olivia Martinez", "/photo-5.jpg", "1005", 30, 45, 23, 'up'),
 ];
 
 // Tier 2: 51-150 subscribers
 export const tier2Creators: Creator[] = [
-  generateRandomData("Liam Thompson", "2001", [100, 150], 5, 'up'),
-  generateRandomData("Ava Garcia", "2002", [70, 100], 7, 'up'),
-  generateRandomData("Ethan Brown", "2003", [120, 150], 8, 'down'),
-  generateRandomData("Isabella Davis", "2004", [60, 90], 10, 'neutral'),
-  generateRandomData("Mason Wilson", "2005", [90, 130], 11, 'up'),
+  generateCreator("Liam Thompson", "/photo-6.jpg", "2001", 85, 142, 5, 'up'),
+  generateCreator("Ava Garcia", "/photo-13.jpg", "2002", 60, 98, 7, 'up'),
+  generateCreator("Ethan Brown", "/photo-14.jpg", "2003", 95, 135, 8, 'down'),
+  generateCreator("Isabella Davis", "/photo-15.jpg", "2004", 75, 112, 10, 'neutral'),
+  generateCreator("Mason Wilson", "/photo-16.jpg", "2005", 90, 128, 11, 'up'),
 ];
 
-// Tier 3: 151-350 subscribers
+// Tier 3: 151+ subscribers
 export const tier3Creators: Creator[] = [
-  generateRandomData("Theresa Webb", "3001", [197, 250], 1, 'up'),
-  generateRandomData("Floyd Miles", "3002", [169, 300], 2, 'up'),
-  generateRandomData("Jacob Jones", "3003", [200, 300], 3, 'down'),
-  generateRandomData("Amelia Taylor", "3004", [180, 250], 4, 'neutral'),
-  generateRandomData("Benjamin Moore", "3005", [160, 220], 6, 'up'),
-];
-
-// Tier 4: 351-750 subscribers
-export const tier4Creators: Creator[] = [
-  generateRandomData("Charlotte Anderson", "4001", [500, 750], 1, 'up'),
-  generateRandomData("Lucas Thomas", "4002", [450, 600], 2, 'down'),
-  generateRandomData("Mia Jackson", "4003", [600, 750], 3, 'up'),
-  generateRandomData("Henry White", "4004", [400, 500], 4, 'neutral'),
-  generateRandomData("Evelyn Harris", "4005", [650, 750], 5, 'up'),
-];
-
-// Tier 5: 750+ subscribers
-export const tier5Creators: Creator[] = [
-  generateRandomData("Alexander Clark", "5001", [1000, 1500], 1, 'up'),
-  generateRandomData("Abigail Lewis", "5002", [800, 1200], 2, 'up'),
-  generateRandomData("Daniel Lee", "5003", [1500, 2000], 3, 'down'),
-  generateRandomData("Sofia Walker", "5004", [800, 1000], 4, 'neutral'),
-  generateRandomData("William Hall", "5005", [2000, 2500], 5, 'up'),
+  generateCreator("Theresa Webb", "/profile-800x800.png", "3001", 180, 245, 1, 'up'),
+  generateCreator("Floyd Miles", "/profile2-500x500.png", "3002", 165, 285, 2, 'up'),
+  generateCreator("Jacob Jones", "/photo-7.jpg", "3003", 190, 280, 3, 'down'),
+  generateCreator("Amelia Taylor", "/photo-4.jpeg", "3004", 175, 242, 4, 'neutral'),
+  generateCreator("Taylor Moore", "/photo-3.jpeg", "3005", 155, 215, 6, 'up'),
 ];
 
 // All creators combined
@@ -97,15 +80,13 @@ export const allCreators: Creator[] = [
   ...tier1Creators,
   ...tier2Creators,
   ...tier3Creators,
-  ...tier4Creators,
-  ...tier5Creators,
 ];
 
 // Stats for the dashboard
 export const leaderboardStats = {
-  projectedPot: 1734,
+  projectedPot: 1234,
   projectedSUMUPot: 5200,
-  monthlyIncrease: 74,
+  monthlyIncrease: 54,
   totalCreators: 82,
   timeRemaining: {
     days: 12,
