@@ -1,17 +1,20 @@
 // components/auth/SignUpForm.tsx
-import React from 'react';
-import { useState, FormEvent, ChangeEvent } from 'react';
-import { useRouter } from 'next/router';
-import { supabase } from '../../lib/supabase';
+'use client';
 
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../contexts/AuthContext';
+import Link from 'next/link';
+import React from 'react';
 interface FormData {
   fullName: string;
   email: string;
   password: string;
 }
 
-export default function SignUpForm(): React.ReactElement {
+export default function SignUpForm(): React.ReactElement {      
   const router = useRouter();
+  const { signUp } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -33,27 +36,25 @@ export default function SignUpForm(): React.ReactElement {
     setError(null);
     
     try {
-      // Sign up with Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-            onboarding_step: 'profile_details' // Track onboarding progress
-          }
+      const { error, data } = await signUp(formData.email, formData.password, {
+        data: {
+          full_name: formData.fullName,
+          onboarding_step: 'profile_details'
         }
       });
       
       if (error) throw error;
       
-      if (data.user) {
-        // Store user ID in local storage to reference during onboarding
-        localStorage.setItem('creatorId', data.user.id);
-        
-        // Redirect to the next step
-        router.push('/signup/profile-details');
-      }
+      console.log("Sign up successful, attempting navigation");
+      
+      // Try multiple navigation approaches
+      router.push('/signup/create-profile');
+      
+      // Add a small delay and try again (sometimes helps with timing issues)
+      setTimeout(() => {
+        console.log("Trying navigation again after delay");
+        router.push('/signup/create-profile');
+      }, 100);
     } catch (error: any) {
       console.error('Error signing up:', error);
       setError(error.message);
@@ -132,9 +133,9 @@ export default function SignUpForm(): React.ReactElement {
         
         <p className="text-center mt-4 text-gray-400">
           Already have an account?{' '}
-          <a href="/login" className="text-green-400 hover:underline">
+          <Link href="/login" className="text-green-400 hover:underline">
             Log in
-          </a>
+          </Link>
         </p>
       </form>
     </div>

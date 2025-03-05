@@ -1,21 +1,23 @@
+'use client';
+
 import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import { supabase } from '../../lib/supabase';
+import { useRouter } from 'next/navigation';
+import { supabase } from '../../../lib/supabase';
 import { User } from '@supabase/supabase-js';
-import { UserMetadata } from '../../types/supabase';
+import { UserMetadata } from '../../../types/supabase';
 import React from 'react';
+
 // Content categories for creators to choose from
 const CONTENT_CATEGORIES = [
-  'Art & Illustration',
+  'Art',
   'Music',
-  'Writing & Journalism',
   'Video & Film',
   'Photography',
   'Education',
   'Gaming',
   'Podcasts',
-  'Software & Technology',
+  'Technology',
+  'Finance',
   'Other'
 ];
 
@@ -118,11 +120,6 @@ export default function CreateProfile(): React.ReactElement {
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 px-6 sm:px-6 lg:px-8">
-      <Head>
-        <title>Complete Your Profile | SUMU</title>
-        <meta name="description" content="Set up your creator profile on SUMU" />
-      </Head>
-      
       <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8">
         <h1 className="text-center text-3xl font-extrabold text-white">
           Complete Your Profile

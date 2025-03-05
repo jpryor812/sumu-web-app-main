@@ -6,7 +6,11 @@ import Image from 'next/image';
 import { Home, Trophy, LayoutDashboard, User, Users, TrendingUp, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
-export default function SideNav() {
+interface SideNavProps {
+  width?: string;
+}
+
+export default function SideNav({ width }: SideNavProps) {
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
@@ -43,6 +47,7 @@ export default function SideNav() {
       <div className={`fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-50 flex flex-col
         ${isMobile ? 'w-16' : 'w-64'} 
         ${isMobile ? '-translate-x-full' : 'translate-x-0'}`}
+        style={{ width }}
       >
         {/* Main Navigation */}
         <div className="flex-1 flex flex-col p-4 space-y-6">

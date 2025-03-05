@@ -10,10 +10,7 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{
-    error: Error | null;
-    data: { user: User | null; session: Session | null } | null;
-  }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; data: any }>;
   signUp: (email: string, password: string, options?: any) => Promise<{
     error: Error | null;
     data: { user: User | null; session: Session | null } | null;
@@ -62,12 +59,25 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
     return () => subscription.unsubscribe();
   }, []);
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      return { data, error };
+    } catch (error) {
+      console.error('Error signing in:', error);
+      return { data: null, error: error as Error };
+    }
+  };
+
   const value = {
     session,
     user,
     loading,
-    signIn: (email: string, password: string) => 
-      supabase.auth.signInWithPassword({ email, password }),
+    signIn,
     signUp: (email: string, password: string, options?: any) => 
       supabase.auth.signUp({ email, password, options }),
     signOut: () => supabase.auth.signOut(),
