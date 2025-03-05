@@ -37,7 +37,7 @@ export default function SocialFeed() {
           <div className="px-4 py-2">
             <div className="relative w-full aspect-[2/1]">
               <Image
-                src="/alex-tweet-image.png"
+                src="/alex-tweet-image2.png"
                 alt="alex post image"
                 fill
                 className="object-cover rounded-lg"

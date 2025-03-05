@@ -32,7 +32,7 @@ const generateCreator = (
   // Base rewards on both growth and current subscriber count
   const baseMultiplier = subscribersNow > 150 ? 3 : subscribersNow > 50 ? 2 : 1;
   const projectedUSDC = growthPercentage * baseMultiplier;
-  const projectedSUMU = subscribersNow * baseMultiplier *2; // More SUMU for higher sub count
+  const projectedSUMU = subscribersNow * baseMultiplier *.8; // More SUMU for higher sub count
   
   return {
     id,
@@ -60,9 +60,9 @@ export const tier1Creators: Creator[] = [
 // Tier 2: 51-150 subscribers
 export const tier2Creators: Creator[] = [
   generateCreator("Liam Thompson", "/photo-6.jpg", "2001", 85, 142, 5, 'up'),
-  generateCreator("Ava Garcia", "/photo-13.jpg", "2002", 60, 98, 7, 'up'),
+  generateCreator("Ava Garcia", "/photo-5.jpg", "2002", 60, 98, 7, 'up'),
   generateCreator("Ethan Brown", "/photo-14.jpg", "2003", 95, 135, 8, 'down'),
-  generateCreator("Isabella Davis", "/photo-15.jpg", "2004", 75, 112, 10, 'neutral'),
+  generateCreator("Isabella Davis", "/photo-1.jpeg", "2004", 75, 112, 10, 'neutral'),
   generateCreator("Mason Wilson", "/photo-16.jpg", "2005", 90, 128, 11, 'up'),
 ];
 

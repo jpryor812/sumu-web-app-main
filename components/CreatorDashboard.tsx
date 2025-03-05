@@ -28,8 +28,8 @@ const creatorStats = {
     weeklyLabels: ['Apr 1', 'Apr 8', 'Apr 15', 'Apr 22', 'Apr 30'],
   },
   rewards: {
-    totalUSDC: 1247.89,
-    pendingUSDC: 247.50,
+    totalUSDC: 1086.89,
+    pendingUSDC: 147.50,
     totalSUMU: 1280,
     pendingSUMU: 360,
     ownershipPercentage: 0.0042

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react'; // Import the arrow icon
 
 // Total number of SUMU tokens/shares
-const TOTAL_SUMU_SUPPLY = 10_000_000;
+const TOTAL_SUMU_SUPPLY = 2_000_000;
 
 // Predefined company valuations
 const VALUATIONS = [

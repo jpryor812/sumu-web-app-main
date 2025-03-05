@@ -22,24 +22,6 @@ export default function NewPostsHome() {
     // Example posts data - replace with your actual data
     const posts: Post[] = [
         {
-            id: 1,
-            postImage: "/Daytrade-chart.png",
-            creatorName: "Just-in Trades",
-            creatorImage: "/profile_picture.jpg",
-            title: "How I just doubled my profit in one month",
-            date: "8:46am",
-            category: "Finance"
-        },
-        {
-            id: 2,
-            postImage: "/more-or-less-3.png",
-            creatorName: "Alex Dethero",
-            creatorImage: "/alex-profile.png",
-            title: "NEW ALBUM OUT!",
-            date: "8:56am",
-            category: "Music"
-        },
-        {
             id: 3,
             postImage: "/digital-art-background.png",
             creatorName: "Ani-Mae",
@@ -58,14 +40,33 @@ export default function NewPostsHome() {
             category: "Art"
         },
         {
+            id: 2,
+            postImage: "/more-or-less-3.png",
+            creatorName: "Alex Dethero",
+            creatorImage: "/alex-profile.png",
+            title: "NEW ALBUM OUT!",
+            date: "8:56am",
+            category: "Music"
+        },
+        {
+            id: 1,
+            postImage: "/Daytrade-chart.png",
+            creatorName: "Just-in Trades",
+            creatorImage: "/profile_picture.jpg",
+            title: "How I just doubled my profit in one month",
+            date: "8:46am",
+            category: "Finance"
+        },
+        {
             id: 5,
             postImage: "/payment-blog-header.png",
             creatorName: "Blockchain Bobby",
             creatorImage: "/profile2-500x500.png",   
             title: "Here come stablecoins...",
-            date: "9:46am",
+            date: "8:12am",
             category: "Technology"
         },
+
 
     ];
 

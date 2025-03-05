@@ -1,17 +1,21 @@
 'use client'
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Search, ChevronDown, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import SideNav from '@/components/SideNav';
 import { allCreators, tier1Creators, tier2Creators, tier3Creators, leaderboardStats } from '@/data/leaderboardData';
 import RewardsInfoModal from '@/components/RewardsInfoModal';
 
+// Define the toggle options as a type
+type ToggleOption = 'earners' | 'growers';
+
 export default function LeaderboardPage() {
   const [selectedTier, setSelectedTier] = useState<string>('151-350');
-  const [sortBy, setSortBy] = useState<string>('growthPercentage');
+  const [sortBy, setSortBy] = useState('projectedSUMU');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showRewardsModal, setShowRewardsModal] = useState(false);
+  const [activeToggle, setActiveToggle] = useState<ToggleOption>('earners');
 
   // Get creators based on selected tier or all creators for Top Earners
   const getCreatorsByTier = () => {
@@ -60,6 +64,11 @@ export default function LeaderboardPage() {
       if (sortBy === 'subscribersNow') return b.subscribersNow - a.subscribersNow;
       return 0;
     });
+
+  // Optional: If you need to do something when the component mounts
+  useEffect(() => {
+    // Any initialization logic related to the earners view
+  }, []);
 
   return (
     <div className="flex">
@@ -163,7 +172,7 @@ export default function LeaderboardPage() {
           {/* Toggle for Top Growers / Top Earners */}
           <div className="mb-4 mt-2 flex justify-center">
             <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden">
-            <button
+              <button
                 className={`px-4 py-2 text-md font-semibold ${
                   sortBy === 'projectedSUMU' 
                     ? 'bg-blue-500 text-white' 
