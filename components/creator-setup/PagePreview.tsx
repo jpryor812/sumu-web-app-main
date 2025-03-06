@@ -4,6 +4,17 @@ import Image from "next/image";
 import { Tier } from '@/app/signup/creator-setup/page';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { useState, useMemo } from 'react';
+import { 
+  SiX, 
+  SiInstagram, 
+  SiYoutube, 
+  SiTiktok, 
+  SiFacebook, 
+  SiTwitch,
+  SiGithub,
+  SiDiscord,
+} from '@icons-pack/react-simple-icons';
+import { SocialLink } from "./SocialLinks";
 
 interface PagePreviewProps {
   formData: {
@@ -12,6 +23,7 @@ interface PagePreviewProps {
     profileMedia: File | null;
     isProfileVideo: boolean;
     videoOrientation?: number;
+    socialLinks: SocialLink[];
   };
   tiers: Tier[];
   onClose: () => void;
@@ -40,6 +52,22 @@ export default function PagePreview({ formData, tiers, onClose, isOpen = true, u
         return Math.min(tiers.length - cardsToShow, prev + 1);
       }
     });
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    const iconProps = { size: 24, className: "text-gray-300 hover:text-white transition-colors" };
+    
+    switch (platform.toLowerCase()) {
+      case 'x': return <SiX {...iconProps} />;
+      case 'instagram': return <SiInstagram {...iconProps} />;
+      case 'youtube': return <SiYoutube {...iconProps} />;
+      case 'tiktok': return <SiTiktok {...iconProps} />;
+      case 'facebook': return <SiFacebook {...iconProps} />;
+      case 'twitch': return <SiTwitch {...iconProps} />;
+      case 'github': return <SiGithub {...iconProps} />;
+      case 'discord': return <SiDiscord {...iconProps} />;
+      default: return null;
+    }
   };
 
   if (!isOpen) return null;
@@ -127,6 +155,27 @@ export default function PagePreview({ formData, tiers, onClose, isOpen = true, u
               <p className="text-gray-300 text-center text-sm max-w-2xl mb-8">
                 {formData.bio || "Your bio will appear here..."}
               </p>
+
+              <div className="flex justify-center gap-4 mb-8">
+                {formData.socialLinks
+                  .filter(link => link.platform && link.url)
+                  .map((link, index) => {
+                    const icon = getPlatformIcon(link.platform);
+                    if (!icon) return null;
+                    
+                    return (
+                      <a 
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:scale-110 transition-transform"
+                      >
+                        {icon}
+                      </a>
+                    );
+                  })}
+              </div>
 
               <h3 className="text-xl font-semibold text-white mb-6">
                 Choose Your Membership

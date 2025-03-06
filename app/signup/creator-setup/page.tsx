@@ -11,6 +11,7 @@ import TierManager from '@/components/creator-setup/TierManager';
 import PagePreview from '@/components/creator-setup/PagePreview';
 import PreviewButton from '@/components/creator-setup/PreviewButton';
 import VideoUploader from '@/components/creator-setup/VideoUploader';
+import SocialLinks, { SocialLink } from '@/components/creator-setup/SocialLinks';
 
 // Define a tier type for better type safety
 export interface Tier {
@@ -29,9 +30,15 @@ export default function CreatorSetup() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     bio: '',
+    displayName: '',
     bannerImage: null as File | null,
     profileMedia: null as File | null,
     isProfileVideo: false,
+    socialLinks: [
+      { platform: '', url: '' },
+      { platform: '', url: '' },
+      { platform: '', url: '' }
+    ] as SocialLink[]
   });
   
   // Initialize with two default tiers
@@ -138,29 +145,34 @@ export default function CreatorSetup() {
       // Save creator profile to database
       const { error: creatorError } = await supabase
         .from('creators')
-        .update({
+        .upsert({
+          id: user.id,
+          display_name: formData.displayName,
           bio: formData.bio,
           banner_image_url: bannerUrl,
-          profile_image_url: profileUrl,
+          profile_media_url: profileUrl,
+          profile_media_type: formData.isProfileVideo ? 'video' : 'image',
           membership_tiers: tiers,
+          social_links: formData.socialLinks,
           updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
+        });
 
       if (creatorError) throw creatorError;
 
       // Update user metadata
-      await supabase.auth.updateUser({
+      const { error: userUpdateError } = await supabase.auth.updateUser({
         data: {
           onboarding_step: 'complete'
         }
       });
 
+      if (userUpdateError) throw userUpdateError;
+
       // Redirect to dashboard
-      router.push('/dashboard');
+      router.push('/my-page');
     } catch (err: any) {
       console.error('Error saving creator profile:', err);
-      setError(err.message);
+      setError(err.message || 'An error occurred while saving your profile');
     } finally {
       setLoading(false);
     }
@@ -215,7 +227,13 @@ export default function CreatorSetup() {
             
             <BioSection 
               bio={formData.bio}
+              displayName={formData.displayName}
               handleChange={handleChange}
+            />
+            
+            <SocialLinks 
+              links={formData.socialLinks}
+              onChange={(links) => setFormData(prev => ({ ...prev, socialLinks: links }))}
             />
             
             <TierManager 

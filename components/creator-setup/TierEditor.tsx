@@ -60,7 +60,7 @@ export default function TierEditor({
           value={tier.price}
           onChange={(e) => onTierChange(tierIndex, 'price', e.target.value)}
           min="1"
-          step="1"
+          step="0.01"
           className="w-full bg-gray-700 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

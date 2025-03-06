@@ -179,3 +179,101 @@ body {
   opacity: 0.4;
   pointer-events: none;
 }
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  @apply text-white;
+  position: relative;
+}
+
+.ProseMirror h1 {
+  @apply text-4xl font-bold mb-4 mt-2;
+}
+
+.ProseMirror h2 {
+  @apply text-3xl font-bold mb-3 mt-2;
+}
+
+.ProseMirror h3 {
+  @apply text-2xl font-bold mb-2 mt-2;
+}
+
+.ProseMirror p {
+  @apply mb-2;
+}
+
+.ProseMirror ul {
+  @apply list-disc ml-4 mb-2;
+}
+
+.ProseMirror ol {
+  @apply list-decimal ml-4 mb-2;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-gray-500 pl-4 italic my-2;
+}
+
+.ProseMirror pre {
+  @apply bg-gray-800 rounded p-2 my-2 font-mono;
+}
+
+.ProseMirror a {
+  @apply text-blue-400 hover:text-blue-300 underline;
+}
+
+.ProseMirror img {
+  @apply max-w-full h-auto rounded;
+  position: relative;
+  cursor: default;
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 3px solid #4040FF;
+}
+
+.image-resizer {
+  display: inline-flex;
+  position: relative;
+  max-width: 100%;
+}
+
+.image-resizer__handle {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: #4040FF;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 3;
+}
+
+.image-resizer__handle--left {
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.image-resizer__handle--right {
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+/* For Lexical Editor */
+[data-lexical-editor] h1 {
+  @apply text-4xl font-bold mb-4 mt-2;
+}
+
+[data-lexical-editor] h2 {
+  @apply text-3xl font-bold mb-3 mt-2;
+}
+
+[data-lexical-editor] h3 {
+  @apply text-2xl font-bold mb-2 mt-2;
+}

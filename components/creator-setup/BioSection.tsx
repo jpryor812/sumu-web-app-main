@@ -2,10 +2,11 @@ import { ChangeEvent, useState, useEffect } from 'react';
 
 interface BioSectionProps {
   bio: string;
+  displayName: string;
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-export default function BioSection({ bio, handleChange }: BioSectionProps) {
+export default function BioSection({ bio, displayName, handleChange }: BioSectionProps) {
   const [showCounter, setShowCounter] = useState(false);
   const maxLength = 500;
   
@@ -33,6 +34,19 @@ export default function BioSection({ bio, handleChange }: BioSectionProps) {
   
   return (
     <div className="mb-8">
+      <div className="mb-6">
+        <label className="block text-white text-lg font-medium mb-2">
+          Display Name
+        </label>
+        <input
+          name="displayName"
+          value={displayName}
+          onChange={handleChange}
+          placeholder="Enter your display name"
+          className="w-full bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       <label className="block text-white text-lg font-medium mb-2">
         Bio
       </label>
