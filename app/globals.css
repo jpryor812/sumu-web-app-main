@@ -297,3 +297,60 @@ body {
   max-height: 600px;
   overflow-y: auto;
 }
+
+/* ContentEditable Editor Styles */
+[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
+  color: #9ca3af;
+  font-style: italic;
+  cursor: text;
+}
+
+[contenteditable="true"] img {
+  max-width: 100%;
+  height: auto;
+}
+
+[contenteditable="true"] blockquote {
+  border-left: 3px solid #4b5563;
+  margin-left: 0;
+  padding-left: 1rem;
+  color: #9ca3af;
+}
+
+[contenteditable="true"] pre {
+  background-color: #111827;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+  font-family: monospace;
+}
+
+[contenteditable="true"] h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+  line-height: 1.2;
+}
+
+[contenteditable="true"] h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+  line-height: 1.2;
+}
+
+[contenteditable="true"] h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+  line-height: 1.25;
+}
+
+/* Force all pasted content to use the editor's text color */
+[contenteditable="true"] * {
+  color: white !important;
+}
