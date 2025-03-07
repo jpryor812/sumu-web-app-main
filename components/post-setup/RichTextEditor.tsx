@@ -22,7 +22,6 @@ import { ImageNode } from './nodes/ImageNode';
 import { PollNode } from './nodes/PollNode';
 import PollPlugin from './plugins/PollPlugin';
 
-
 import './editor.css';
 import React, { useState, useEffect } from 'react';
 
@@ -64,6 +63,7 @@ class LexicalErrorBoundary extends React.Component<
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
+  placeholder?: string;
 }
 
 export default function RichTextEditor({ content, onChange }: RichTextEditorProps) {
@@ -128,9 +128,8 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         <div className="editor-inner">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<div className="editor-placeholder">Start writing...</div>}
             ErrorBoundary={LexicalErrorBoundary}
-          />
+            />
           <HistoryPlugin />
           <AutoFocusPlugin />
           <ListPlugin />

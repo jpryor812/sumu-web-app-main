@@ -9,13 +9,25 @@ interface TierManagerProps {
 }
 
 export default function TierManager({ tiers, setTiers, setError }: TierManagerProps) {
-  // State for new feature inputs
-  const [newFeatures, setNewFeatures] = useState<string[]>(Array(tiers.length).fill(''));
+  // Initialize newFeatures with empty strings for each tier
+  const [newFeatures, setNewFeatures] = useState<string[]>(() => 
+    Array(tiers.length).fill('')
+  );
   
-  // Update new features array when tiers change
+  // Update newFeatures when tiers length changes
   useEffect(() => {
-    setNewFeatures(Array(tiers.length).fill(''));
-  }, [tiers.length]);
+    // This ensures newFeatures array is always the same length as tiers
+    if (newFeatures.length !== tiers.length) {
+      setNewFeatures(prev => {
+        // Keep existing values and add empty strings for new tiers
+        const updated = [...prev];
+        while (updated.length < tiers.length) {
+          updated.push('');
+        }
+        return updated.slice(0, tiers.length);
+      });
+    }
+  }, [tiers.length, newFeatures.length]);
   
   // Add a new tier (up to maximum of 5)
   const addTier = () => {
@@ -24,15 +36,18 @@ export default function TierManager({ tiers, setTiers, setError }: TierManagerPr
       return;
     }
     
-    setTiers([
-      ...tiers,
+    setTiers(prev => [
+      ...prev,
       {
-        name: `Tier ${tiers.length + 1}`,
+        name: `Tier ${prev.length + 1}`,
         price: '25',
         description: 'Premium membership benefits',
         features: ['All lower tier benefits']
       }
     ]);
+    
+    // Immediately update newFeatures to match the new tiers length
+    setNewFeatures(prev => [...prev, '']);
   };
 
   // Remove a tier
@@ -42,7 +57,10 @@ export default function TierManager({ tiers, setTiers, setError }: TierManagerPr
       return;
     }
     
-    setTiers(tiers.filter((_, i) => i !== index));
+    setTiers(prev => prev.filter((_, i) => i !== index));
+    
+    // Update newFeatures when removing a tier
+    setNewFeatures(prev => prev.filter((_, i) => i !== index));
   };
 
   // Handle tier field changes
@@ -57,7 +75,7 @@ export default function TierManager({ tiers, setTiers, setError }: TierManagerPr
 
   // Add a feature to a tier
   const addFeature = (tierIndex: number) => {
-    const feature = newFeatures[tierIndex];
+    const feature = newFeatures[tierIndex] || '';
     if (feature.trim() === '') return;
     
     const updatedTiers = [...tiers];
@@ -94,7 +112,7 @@ export default function TierManager({ tiers, setTiers, setError }: TierManagerPr
           tier={tier}
           tierIndex={tierIndex}
           canRemove={tiers.length > 1}
-          newFeature={newFeatures[tierIndex]}
+          newFeature={newFeatures[tierIndex] || ''} // Ensure it's never undefined
           onRemoveTier={() => removeTier(tierIndex)}
           onTierChange={handleTierChange}
           onAddFeature={() => addFeature(tierIndex)}

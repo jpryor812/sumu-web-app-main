@@ -256,67 +256,141 @@ export default function ToolbarPlugin(): React.ReactNode {
   return (
 <div className="toolbar">
 <button 
+  type="button"
   onClick={formatBold} 
   className="toolbar-item" 
   aria-label="Format Bold"
-  title="Bold"  // This creates the tooltip
+  data-tooltip="Bold"  // Custom data attribute for tooltip
 >
   <Bold size={18} />
 </button>
 
 <button 
+  type="button"
   onClick={formatItalic} 
   className="toolbar-item" 
   aria-label="Format Italic"
-  title="Italic"  // Tooltip for italic
+  data-tooltip="Italic"  // Custom data attribute for tooltip
 >
   <Italic size={18} />
 </button>
-  <button onClick={formatUnderline} className="toolbar-item" title="Underline">
-  <Underline size={18} />
-</button>
+  <button 
+    type="button"
+    onClick={formatUnderline} 
+    className="toolbar-item" 
+    aria-label="Format Underline"
+    data-tooltip="Underline"  // Custom data attribute for tooltip
+  >
+    <Underline size={18} />
+  </button>
 
-<button onClick={() => formatHeading('h1')} className="toolbar-item" title="Heading 1">
+<button 
+  type="button"
+  onClick={() => formatHeading('h1')} 
+  className="toolbar-item" 
+  aria-label="Format Heading 1"
+  data-tooltip="Heading 1"  // Custom data attribute for tooltip
+>
   <Heading1 size={18} />
 </button>
 
-<button onClick={() => formatHeading('h2')} className="toolbar-item" title="Heading 2">
+<button 
+  type="button"
+  onClick={() => formatHeading('h2')} 
+  className="toolbar-item" 
+  aria-label="Format Heading 2"
+  data-tooltip="Heading 2"  // Custom data attribute for tooltip
+>
   <Heading2 size={18} />
 </button>
 
-<button onClick={() => formatHeading('h3')} className="toolbar-item" title="Heading 3">
+<button 
+  type="button"
+  onClick={() => formatHeading('h3')} 
+  className="toolbar-item" 
+  aria-label="Format Heading 3"
+  data-tooltip="Heading 3"  // Custom data attribute for tooltip
+>
   <Heading3 size={18} />
 </button>
 
-<button onClick={formatBulletList} className="toolbar-item" title="Bullet List">
+<button 
+  type="button"
+  onClick={formatBulletList} 
+  className="toolbar-item" 
+  aria-label="Format Bullet List"
+  data-tooltip="Bullet List"  // Custom data attribute for tooltip
+>
   <List size={18} />
 </button>
 
-<button onClick={formatNumberedList} className="toolbar-item" title="Numbered List">
+<button 
+  type="button"
+  onClick={formatNumberedList} 
+  className="toolbar-item" 
+  aria-label="Format Numbered List"
+  data-tooltip="Numbered List"  // Custom data attribute for tooltip
+>
   <ListOrdered size={18} />
 </button>
 
-<button onClick={insertLink} className="toolbar-item" title="Insert Link">
+<button 
+  type="button"
+  onClick={insertLink} 
+  className="toolbar-item" 
+  aria-label="Insert Link"
+  data-tooltip="Link"  // Custom data attribute for tooltip
+>
   <LinkIcon size={18} />
 </button>
 
-<button onClick={insertImage} className="toolbar-item" title="Insert Image">
+<button 
+  type="button"
+  onClick={insertImage} 
+  className="toolbar-item" 
+  aria-label="Insert Image"
+  data-tooltip="Image"  // Custom data attribute for tooltip
+>
   <ImageIcon size={18} />
 </button>
 
-<button onClick={insertVideo} className="toolbar-item" title="Insert Video">
+<button 
+  type="button"
+  onClick={insertVideo} 
+  className="toolbar-item" 
+  aria-label="Insert Video"
+  data-tooltip="Video"  // Custom data attribute for tooltip
+>
   <Video size={18} />
 </button>
 
-<button onClick={insertPoll} className="toolbar-item" title="Create Poll">
+<button 
+  type="button"
+  onClick={insertPoll} 
+  className="toolbar-item" 
+  aria-label="Create Poll"
+  data-tooltip="Poll"  // Custom data attribute for tooltip
+>
   <Vote size={18} />
 </button>
 
-<button onClick={undo} className="toolbar-item" title="Undo">
+<button 
+  type="button"
+  onClick={undo} 
+  className="toolbar-item" 
+  aria-label="Undo"
+  data-tooltip="Undo"  // Custom data attribute for tooltip
+>
   <Undo size={18} />
 </button>
 
-<button onClick={redo} className="toolbar-item" title="Redo">
+<button 
+  type="button"
+  onClick={redo} 
+  className="toolbar-item" 
+  aria-label="Redo"
+  data-tooltip="Redo"  // Custom data attribute for tooltip
+>
   <Redo size={18} />
 </button>
 </div>
