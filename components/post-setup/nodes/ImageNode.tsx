@@ -57,9 +57,8 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
 
   createDOM(): HTMLElement {
     const dom = document.createElement('div');
-    dom.style.display = 'inline-block';
-    dom.style.position = 'relative';
-    dom.style.textAlign = this.__alignment;
+    dom.style.display = 'block';
+    dom.style.textAlign = 'center'; // Center align by default
     return dom;
   }
 
@@ -227,7 +226,7 @@ function ImageComponent({
   return (
     <div
       className="image-container"
-      style={{ textAlign: alignment }}
+      style={{ textAlign: 'center' }} // Center align
     >
       <div
         className={`image-wrapper ${localIsSelected ? 'selected' : ''}`}

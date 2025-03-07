@@ -5,19 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SideNav from "@/components/SideNav";
 import StaticAura from "@/components/StaticAura";
-import PostImageUploader from '@/components/post-setup/PostImageUploader';
-import { Link, Image as ImageIcon, FileText, Video } from 'lucide-react';
 import RichTextEditor from '@/components/post-setup/RichTextEditor';
 
-type PostType = 'blog' | 'image' | 'video' | 'link';
-
 interface PostFormData {
-  type: PostType;
   title: string;
   content: string;
   coverImage: File | null;
-  videoUrl?: string;
-  linkUrl?: string;
   tierAccess: string;
 }
 
@@ -27,10 +20,8 @@ export default function CreatePost() {
   const [sidebarWidth, setSidebarWidth] = useState('16rem');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [postType, setPostType] = useState<PostType>('blog');
   
   const [formData, setFormData] = useState<PostFormData>({
-    type: 'blog',
     title: '',
     content: '',
     coverImage: null,
@@ -54,7 +45,40 @@ export default function CreatePost() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Add submission logic here
+    
+    try {
+      // Add your submission logic here
+      // Submit post with 'blog' type
+      const postData = {
+        ...formData,
+        type: 'blog' // Always use blog type for backend compatibility
+      };
+      
+      // Submit postData to your backend
+      console.log('Submitting post:', postData);
+      
+      // Example submission code (uncomment and adapt as needed)
+      // const response = await fetch('/api/posts', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(postData),
+      // });
+      
+      // if (response.ok) {
+      //   router.push('/dashboard');
+      // } else {
+      //   const data = await response.json();
+      //   setError(data.message || 'An error occurred');
+      // }
+      
+    } catch (error) {
+      setError('An error occurred while publishing your post');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,115 +90,47 @@ export default function CreatePost() {
           <div className="w-full max-w-2xl">
             <h1 className="text-white text-3xl font-bold mb-8 text-center">Create New Post</h1>
             
-            {/* Post Type Selector */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
-              {[
-                { type: 'blog', icon: FileText, label: 'Blog Post' },
-                { type: 'image', icon: ImageIcon, label: 'Image' },
-                { type: 'video', icon: Video, label: 'Video' },
-                { type: 'link', icon: Link, label: 'Link' },
-              ].map(({ type, icon: Icon, label }) => (
-                <button
-                  key={type}
-                  onClick={() => {
-                    setPostType(type as PostType);
-                    setFormData(prev => ({ ...prev, type: type as PostType }));
-                  }}
-                  className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all
-                    ${postType === type 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
-                >
-                  <Icon className="w-6 h-6 mb-2" />
-                  <span className="text-sm">{label}</span>
-                </button>
-              ))}
-            </div>
-
+            {/* Error display */}
+            {error && (
+              <div className="bg-red-500 text-white p-3 rounded-lg mb-6">
+                {error}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Title (common for all types) */}
+              {/* Title */}
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({...formData, title: e.target.value})}
                 className="w-full bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={`${postType === 'blog' ? 'Blog title' : 
-                            postType === 'image' ? 'Image title' :
-                            postType === 'video' ? 'Video title' : 'Link title'}`}
+                placeholder="Post title"
+                required
               />
 
-              {/* Type-specific content */}
-              {postType === 'blog' && (
-                <RichTextEditor
-                  content={formData.content}
-                  onChange={(content) => setFormData({...formData, content})}
-                />
-              )}
+              {/* Rich Text Editor */}
+              <RichTextEditor
+                content={formData.content}
+                onChange={(content) => setFormData({...formData, content})}
+              />
 
-              {postType === 'image' && (
-                <div className="space-y-4">
-                  <PostImageUploader 
-                    label="Upload Image"
-                    description="Share your artwork, photo, or other image"
-                    file={formData.coverImage}
-                    handleFileChange={(file) => setFormData({...formData, coverImage: file})}
-                    setError={setError}
-                  />
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
-                    className="w-full h-32 bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add a description..."
-                  />
-                </div>
-              )}
-
-              {postType === 'video' && (
-                <div className="space-y-4">
-                  <input
-                    type="url"
-                    value={formData.videoUrl || ''}
-                    onChange={(e) => setFormData({...formData, videoUrl: e.target.value})}
-                    className="w-full bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Paste your YouTube or Twitch URL"
-                  />
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
-                    className="w-full h-32 bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add a description..."
-                  />
-                </div>
-              )}
-
-              {postType === 'link' && (
-                <div className="space-y-4">
-                  <input
-                    type="url"
-                    value={formData.linkUrl || ''}
-                    onChange={(e) => setFormData({...formData, linkUrl: e.target.value})}
-                    className="w-full bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Paste your link URL"
-                  />
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
-                    className="w-full h-32 bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add your thoughts about this link..."
-                  />
-                </div>
-              )}
-
-              {/* Access Level (common for all types) */}
+              {/* Access Level */}
+              <div className="relative">
               <select
                 value={formData.tierAccess}
                 onChange={(e) => setFormData({...formData, tierAccess: e.target.value})}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gray-700 text-white p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
                 <option value="all">Free Preview</option>
                 <option value="basic">Basic Tier & Above</option>
                 <option value="premium">Premium Tier & Above</option>
               </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                <svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
 
               <button
                 type="submit"
@@ -189,4 +145,4 @@ export default function CreatePost() {
       </div>
     </StaticAura>
   );
-} 
+}

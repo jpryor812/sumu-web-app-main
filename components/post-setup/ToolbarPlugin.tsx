@@ -7,15 +7,33 @@ import {
   FORMAT_ELEMENT_COMMAND,
   LexicalEditor,
   createCommand,
+  $insertNodes,
+  $createTextNode,
 } from 'lexical';
-import { INSERT_TABLE_COMMAND } from '@lexical/table';
-import { TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { $createHeadingNode } from '@lexical/rich-text';
+import { TOGGLE_LINK_COMMAND, $createLinkNode } from '@lexical/link';import { $createHeadingNode } from '@lexical/rich-text';
 import { $createListNode, $isListNode, ListNode } from '@lexical/list';
 import { $getSelection, $isRangeSelection, $createParagraphNode, ElementNode } from 'lexical';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from '@lexical/list';
-
+import { INSERT_VIDEO_COMMAND } from './plugins/VideoPlugin';
 import React from 'react';
+import { $createPollNode, createPollOption } from './nodes/PollNode';
+
+import { 
+    Bold, 
+    Italic, 
+    Underline, 
+    Heading1, 
+    Heading2, 
+    Heading3, 
+    List, 
+    ListOrdered, 
+    Link as LinkIcon, 
+    Image as ImageIcon, 
+    Video, 
+    Vote, 
+    Undo, 
+    Redo 
+  } from 'lucide-react';
 
 // Define command types for TypeScript
 export const INSERT_IMAGE_COMMAND = createCommand<{
@@ -24,10 +42,6 @@ export const INSERT_IMAGE_COMMAND = createCommand<{
   width?: number;
   height?: number;
 }>('INSERT_IMAGE_COMMAND');
-
-export const INSERT_VIDEO_COMMAND = createCommand<{
-  url: string;
-}>('INSERT_VIDEO_COMMAND');
 
 export const INSERT_POLL_COMMAND = createCommand<{
   question: string;
@@ -44,6 +58,10 @@ export default function ToolbarPlugin(): React.ReactNode {
 
   const formatItalic = useCallback((): void => {
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+  }, [editor]);
+
+  const formatUnderline = useCallback((): void => {
+    editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
   }, [editor]);
 
   // Headings
@@ -118,11 +136,42 @@ export default function ToolbarPlugin(): React.ReactNode {
   }, [editor]);
 
   // Insert link
-  const insertLink = useCallback((): void => {
-    const url = prompt('Enter URL');
-    if (url) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
-    }
+  const insertLink = useCallback(() => {
+    editor.update(() => {
+      const selection = $getSelection();
+      
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+      
+      const url = prompt('Enter URL');
+      if (!url) return;
+      
+      // Instead of extracting nodes (which removes them from the tree),
+      // get the text content and create a new text node
+      const selectedText = selection.getTextContent();
+      
+      // Create the link node with the URL
+      const linkNode = $createLinkNode(url);
+      
+      // Delete the selected content first
+      selection.removeText();
+      
+      // If there was selected text, add it to the link
+      if (selectedText) {
+        const textNode = $createTextNode(selectedText);
+        linkNode.append(textNode);
+      } else {
+        // If no selection, use the URL as the link text
+        linkNode.append($createTextNode(url));
+      }
+      
+      // Insert the new link node
+      selection.insertNodes([linkNode]);
+      
+      // Focus the editor
+      editor.focus();
+    });
   }, [editor]);
 
   // Insert image
@@ -151,27 +200,49 @@ export default function ToolbarPlugin(): React.ReactNode {
 
   // Insert video
   const insertVideo = useCallback((): void => {
-    const url = prompt('Enter video URL (YouTube, Vimeo, etc.)');
+    const url = prompt('Enter video URL (YouTube, Vimeo, or direct video URL):');
     if (url) {
-      editor.dispatchCommand(INSERT_VIDEO_COMMAND, { url });
+      editor.dispatchCommand(INSERT_VIDEO_COMMAND, { 
+        src: url,
+        width: 640, 
+        height: 360, 
+        showControls: true 
+      });
     }
   }, [editor]);
 
-  // Insert table
-  const insertTable = useCallback((): void => {
-    editor.dispatchCommand(INSERT_TABLE_COMMAND, { 
-      rows: '3', 
-      columns: '3' 
-    });
-  }, [editor]);
 
   // Insert poll
   const insertPoll = useCallback((): void => {
-    editor.dispatchCommand(INSERT_POLL_COMMAND, {
-      question: 'What is your favorite feature?',
-      options: ['Option 1', 'Option 2', 'Option 3'],
+    const question = prompt('Enter poll question:') || 'Default poll question';
+    
+    editor.update(() => {
+      try {
+        console.log('Creating poll node directly with question:', question);
+        
+        // Create with explicit options
+        const pollNode = $createPollNode(question, [
+          createPollOption('Option 1'),
+          createPollOption('Option 2')
+        ]);
+        
+        console.log('Poll node created:', pollNode);
+        
+        // Get selection and insert
+        const selection = $getSelection();
+        if (selection) {
+          selection.insertNodes([pollNode]);
+          console.log('Poll inserted at selection');
+        } else {
+          $insertNodes([pollNode]);
+          console.log('Poll inserted without selection');
+        }
+      } catch (error) {
+        console.error('Error inserting poll:', error);
+      }
     });
   }, [editor]);
+
 
   // History
   const undo = useCallback((): void => {
@@ -183,39 +254,71 @@ export default function ToolbarPlugin(): React.ReactNode {
   }, [editor]);
 
   return (
-    <div className="toolbar">
-      {/* Text formatting */}
-      <button onClick={formatBold} className="toolbar-item" aria-label="Format Bold">
-        Bold
-      </button>
-      <button onClick={formatItalic} className="toolbar-item" aria-label="Format Italic">
-        Italic
-      </button>
+<div className="toolbar">
+<button 
+  onClick={formatBold} 
+  className="toolbar-item" 
+  aria-label="Format Bold"
+  title="Bold"  // This creates the tooltip
+>
+  <Bold size={18} />
+</button>
 
-      {/* Headings */}
-      <button onClick={() => formatHeading('h1')} className="toolbar-item">H1</button>
-      <button onClick={() => formatHeading('h2')} className="toolbar-item">H2</button>
-      <button onClick={() => formatHeading('h3')} className="toolbar-item">H3</button>
+<button 
+  onClick={formatItalic} 
+  className="toolbar-item" 
+  aria-label="Format Italic"
+  title="Italic"  // Tooltip for italic
+>
+  <Italic size={18} />
+</button>
+  <button onClick={formatUnderline} className="toolbar-item" title="Underline">
+  <Underline size={18} />
+</button>
 
-      {/* Lists */}
-      <button onClick={formatBulletList} className="toolbar-item">Bullet List</button>
-      <button onClick={formatNumberedList} className="toolbar-item">Numbered List</button>
+<button onClick={() => formatHeading('h1')} className="toolbar-item" title="Heading 1">
+  <Heading1 size={18} />
+</button>
 
-      {/* Alignment */}
-      <button onClick={() => formatAlignment('left')} className="toolbar-item">Left</button>
-      <button onClick={() => formatAlignment('center')} className="toolbar-item">Center</button>
-      <button onClick={() => formatAlignment('right')} className="toolbar-item">Right</button>
+<button onClick={() => formatHeading('h2')} className="toolbar-item" title="Heading 2">
+  <Heading2 size={18} />
+</button>
 
-      {/* Media */}
-      <button onClick={insertLink} className="toolbar-item">Link</button>
-      <button onClick={insertImage} className="toolbar-item">Image</button>
-      <button onClick={insertVideo} className="toolbar-item">Video</button>
-      <button onClick={insertTable} className="toolbar-item">Table</button>
-      <button onClick={insertPoll} className="toolbar-item">Poll</button>
+<button onClick={() => formatHeading('h3')} className="toolbar-item" title="Heading 3">
+  <Heading3 size={18} />
+</button>
 
-      {/* History */}
-      <button onClick={undo} className="toolbar-item">Undo</button>
-      <button onClick={redo} className="toolbar-item">Redo</button>
-    </div>
+<button onClick={formatBulletList} className="toolbar-item" title="Bullet List">
+  <List size={18} />
+</button>
+
+<button onClick={formatNumberedList} className="toolbar-item" title="Numbered List">
+  <ListOrdered size={18} />
+</button>
+
+<button onClick={insertLink} className="toolbar-item" title="Insert Link">
+  <LinkIcon size={18} />
+</button>
+
+<button onClick={insertImage} className="toolbar-item" title="Insert Image">
+  <ImageIcon size={18} />
+</button>
+
+<button onClick={insertVideo} className="toolbar-item" title="Insert Video">
+  <Video size={18} />
+</button>
+
+<button onClick={insertPoll} className="toolbar-item" title="Create Poll">
+  <Vote size={18} />
+</button>
+
+<button onClick={undo} className="toolbar-item" title="Undo">
+  <Undo size={18} />
+</button>
+
+<button onClick={redo} className="toolbar-item" title="Redo">
+  <Redo size={18} />
+</button>
+</div>
   );
 }

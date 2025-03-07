@@ -7,25 +7,54 @@
     background-color: #111;
   }
   
-  .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    border-bottom: 1px solid #ddd;
-    padding: 8px;
-    gap: 4px;
-  }
-  
   .toolbar-item {
-    border: none;
-    background: #f5f5f5;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-    transition: background 0.2s;
+    position: relative;
   }
   
-  .toolbar-item:hover {
-    background: #e5e5e5;
+  .toolbar-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, visibility 0.1s ease; /* Fast 0.1s transition */
+    z-index: 10;
+  }
+  
+  .toolbar-item:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.2s; /* Show after 0.2s hover instead of ~2s */
+  }
+  
+  /* Small arrow pointing up */
+  .toolbar-item::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+    z-index: 10;
+  }
+  
+  .toolbar-item:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.2s;
   }
   
   .editor-inner {
@@ -66,6 +95,9 @@
     font-style: italic;
   }
   
+  .editor-text-underline {
+    text-decoration: underline;
+  }
   .editor-h1 {
     font-size: 24px;
     font-weight: bold;
@@ -96,34 +128,45 @@
     padding-left: 20px;
   }
   .toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 8px;
-  gap: 4px;
-  background-color: #111;
-  border-bottom: 1px solid #333;
-}
-
-.toolbar-item {
-  border: none;
-  background: #333;
-  color: white;
-  border-radius: 4px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 14px;
-}
-
-.toolbar-item:hover {
-  background: #444;
-}
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+  }
+  
+  .toolbar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .toolbar-item:hover {
+    background-color: #444;
+  }
+  
+  .toolbar-item:active {
+    background-color: #555;
+  }
+  
+  /* Style for active formatting states */
+  .toolbar-item.active {
+    background-color: #3b82f6;
+  }
 
 .editor-input {
   color: white;
   min-height: 300px;
   padding: 15px;
-  background-color: #111;
 }
 
 .editor-placeholder {
@@ -149,6 +192,31 @@
     bottom: -6px;
     cursor: se-resize;
   }
+
+  .editor-container img,
+.editor-input img,
+[contenteditable="true"] img,
+.image-container,
+.image-wrapper {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+/* Center videos by default */
+.editor-container iframe,
+.editor-input iframe,
+[contenteditable="true"] iframe,
+.editor-container video,
+.editor-input video,
+[contenteditable="true"] video,
+.video-container {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
   
   .image-resizer {
     width: 12px;
@@ -156,4 +224,194 @@
     background-color: #4c9aff;
     border: 1px solid white;
     border-radius: 50%;
+  }
+  .video-container {
+    position: relative;
+    margin: 16px 0;
+  }
+  
+  .video-container iframe,
+  .video-container video {
+    display: block;
+    max-width: 100%;
+  }
+  
+  .video-container.selected {
+    outline: 2px solid #1d4ed8;
+    border-radius: 2px;
+  }
+  .editor-table {
+    border-collapse: collapse;
+    border: 2px solid #eee;
+    table-layout: fixed;
+    width: 100%;
+    margin: 16px 0;
+  }
+  
+  .editor-table-cell {
+    border: 1px solid #eee;
+    padding: 8px;
+    min-width: 75px;
+    vertical-align: top;
+    position: relative;
+  }
+  
+  .editor-table-cell-selected {
+    background-color: #f0f9ff;
+  }
+  
+  /* For table resizing */
+  .table-cell-resizer {
+    position: absolute;
+    right: -4px;
+    height: 100%;
+    width: 8px;
+    cursor: ew-resize;
+    z-index: 10;
+    top: 0;
+  }
+  
+  .table-cell-resizer.table-cell-resizer-active {
+    background-color: #1d4ed8;
+    opacity: 0.3;
+  }
+
+  .poll-container {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    background-color: white;
+    max-width: 600px;
+  }
+  
+  /* Poll Editor Styles */
+  .poll-question-input {
+    width: 100%;
+    font-size: 18px;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    outline: none;
+    font-weight: 500;
+  }
+  
+  .poll-options-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .poll-option-editor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .checkbox-placeholder {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  .poll-option-input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px;
+    outline: none;
+  }
+  
+  .poll-option-input:focus {
+    border-color: #3b82f6;
+  }
+  
+  .poll-remove-option {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .poll-add-option {
+    background-color: #f1f5f9;
+    border: none;
+    border-radius: 9999px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  
+  .poll-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .poll-done-button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .poll-done-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+  }
+  
+  /* Poll Display Styles */
+  .poll-question {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  
+  .poll-options-display {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .poll-option-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .poll-option-display input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .poll-option-display label {
+    flex: 1;
+    cursor: pointer;
+  }
+  
+  .poll-edit-button {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
   }

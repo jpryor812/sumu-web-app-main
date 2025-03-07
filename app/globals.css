@@ -286,9 +286,54 @@ body {
 }
 
 /* The CKEditor toolbar */
-.ck-toolbar {
-  border-bottom: 1px solid #e2e8f0 !important;
-  background-color: #f8fafc !important;
+.toolbar-item {
+  position: relative;
+}
+
+.toolbar-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease, visibility 0.1s ease; /* Fast 0.1s transition */
+  z-index: 10;
+}
+
+.toolbar-item:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.2s; /* Show after 0.2s hover instead of ~2s */
+}
+
+/* Small arrow pointing up */
+.toolbar-item::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease, visibility 0.1s ease;
+  z-index: 10;
+}
+
+.toolbar-item:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.2s;
 }
 
 /* Editor content area */
@@ -350,7 +395,238 @@ body {
   line-height: 1.25;
 }
 
-/* Force all pasted content to use the editor's text color */
-[contenteditable="true"] * {
-  color: white !important;
+/* Force all pasted content to use the editor's text color, except links */
+
+/* Updated Poll Styles to match your preferred design */
+/* Dark theme Poll Styles */
+.PollNode__container {
+  border: 1px solid #777;
+  border-radius: 12px;
+  background-color: #121212;
+  padding: 20px;
+  margin: 16px 0;
+  max-width: 800px;
+  min-width: 40vw;
+}
+
+.PollNode__inner {
+  width: 100%;
+}
+
+.PollNode__heading {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-align: center;
+  color: white;
+}
+
+.PollNode__optionContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.PollNode__optionCheckboxWrapper {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+}
+
+.PollNode__optionCheckboxChecked {
+  border: 1px solid #3b82f6;
+  background-color: #3b82f6;
+}
+
+.PollNode__optionCheckbox {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.PollNode__optionInputWrapper {
+  flex: 1;
+  position: relative;
+  border: 1px solid #555;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+.PollNode__optionInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: white;
+  outline: none;
+  caret-color: white; /* Makes the cursor visible within poll inputs */
+}
+
+.PollNode__optionInput {
+  caret-color: white !important; 
+}
+
+.PollNode__optionDelete {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #777;
+  cursor: pointer;
+}
+
+.PollNode__optionDelete:hover {
+  color: #ef4444;
+}
+
+.PollNode__optionDeleteDisabled {
+  color: #444;
+  cursor: not-allowed;
+}
+
+.PollNode__optionDeleteDisabled:hover {
+  color: #444;
+}
+
+.PollNode__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.Button__root {
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.Button__root:hover {
+  background-color: #444;
+}
+
+.Button__small {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Hide votes visualization for cleaner look */
+.PollNode__optionInputVotes {
+  display: none;
+}
+
+.PollNode__optionInputVotesCount {
+  display: none;
+}
+.editor-input, 
+[contenteditable="true"]:not(a),
+.ContentEditable__root:not(a),
+.editor-container .editor-inner .editor-input:not(a),
+div[contenteditable="true"]:not(a),
+div[role="textbox"]:not(a) {
+  caret-color: white;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* Force visibility of the cursor */
+.editor-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* Allows clicking through */
+  z-index: -1; /* Behind the text but in front of any background issues */
+}
+
+/* Target all content editable areas */
+[contenteditable="true"] {
+  caret-color: white !important;
+}
+
+/* For extra specificity to override any inline styles */
+.LexicalEditor .ContentEditable__root {
+  caret-color: white !important;
+}
+
+/* Also add a more visible caret by making it thicker */
+@keyframes blink-caret {
+  from, to { caret-color: transparent }
+  50% { caret-color: white }
+}
+
+.editor-input, 
+.ContentEditable__root,
+[contenteditable="true"] {
+  caret-width: 2px !important; /* Make the cursor thicker where supported */
+  caret-color: white; 
+  animation: blink-caret 1s step-end infinite; /* Optional: make cursor blink for visibility */
+}
+
+/* Link styling in the editor */
+.editor-container a,
+.editor-inner a,
+.editor-input a,
+[contenteditable="true"] a,
+.ContentEditable__root a,
+a[data-lexical-editor],
+.editor-link {
+  color: #3b82f6 !important; /* Add !important for link color */
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+/* Style when hovering over links */
+.editor-container a:hover,
+.editor-input a:hover,
+[data-lexical-editor] a:hover,
+a.editor-link:hover {
+  color: #2563eb; /* Slightly darker blue on hover */
+  text-decoration: underline; /* Keep the underline on hover */
+}
+
+/* Specific rules for links in rich text editors */
+.ql-editor a {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+}
+
+.ql-editor a:hover {
+  color: #2563eb !important;
+}
+
+/* For Quill specifically */
+.quill a,
+.quill .ql-snow a {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+}
+
+/* Override any other rules that might be affecting links */
+[contenteditable="true"] a,
+[contenteditable="true"] a span,
+[contenteditable="true"] a * {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
 }

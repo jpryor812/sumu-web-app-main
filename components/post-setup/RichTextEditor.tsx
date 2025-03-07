@@ -10,13 +10,17 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import ImagesPlugin from './plugins/ImagesPlugin';
 import ImageSelectionPlugin from './plugins/ImageSelectionPlugin';
 import ToolbarPlugin from './ToolbarPlugin';
-
+import { VideoNode } from './nodes/VideoNode';
+import VideoPlugin from './plugins/VideoPlugin';
 import { ImageNode } from './nodes/ImageNode';
+import { PollNode } from './nodes/PollNode';
+import PollPlugin from './plugins/PollPlugin';
 
 
 import './editor.css';
@@ -87,6 +91,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       text: {
         bold: 'editor-text-bold',
         italic: 'editor-text-italic',
+        underline: 'editor-text-underline',
       },
       heading: {
         h1: 'editor-h1',
@@ -97,6 +102,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         ul: 'editor-list-ul',
         ol: 'editor-list-ol',
       },
+      link: 'editor-link',
     },
     onError: (error: any) => console.error(error),
     nodes: [
@@ -110,8 +116,8 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       LinkNode,
       AutoLinkNode,
       ImageNode,
-      //VideoNode,
-      //PollNode,
+      VideoNode,
+      PollNode,
     ],
   };
 
@@ -128,10 +134,13 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
           <HistoryPlugin />
           <AutoFocusPlugin />
           <ListPlugin />
-          <LinkPlugin />
+          <LinkPlugin validateUrl={(url) => true} />
+          <ClickableLinkPlugin />
           <TablePlugin />
           <ImagesPlugin />
           <ImageSelectionPlugin />
+          <VideoPlugin />
+          <PollPlugin />
         </div>
       </div>
     </LexicalComposer>
