@@ -37,6 +37,17 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
     );
   }
 
+  static importJSON(serializedNode: any): ImageNode {
+    return new ImageNode(
+      serializedNode.src,
+      serializedNode.altText,
+      serializedNode.width,
+      serializedNode.height,
+      serializedNode.alignment || 'center',
+      false
+    );
+  }
+
   constructor(
     src: string,
     altText: string = '',

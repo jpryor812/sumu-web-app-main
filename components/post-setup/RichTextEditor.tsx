@@ -13,6 +13,8 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import ImagesPlugin from './plugins/ImagesPlugin';
 import ImageSelectionPlugin from './plugins/ImageSelectionPlugin';
 import ToolbarPlugin from './ToolbarPlugin';
@@ -21,68 +23,138 @@ import VideoPlugin from './plugins/VideoPlugin';
 import { ImageNode } from './nodes/ImageNode';
 import { PollNode } from './nodes/PollNode';
 import PollPlugin from './plugins/PollPlugin';
+import { $getRoot, EditorState, LexicalEditor } from 'lexical';
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 
 import './editor.css';
 import React, { useState, useEffect } from 'react';
 
-// Add this custom error boundary implementation
-class LexicalErrorBoundary extends React.Component<
-  {children: React.ReactNode},
-  {error: any}
-> {
-  constructor(props: {children: React.ReactNode}) {
-    super(props);
-    this.state = { error: null };
-  }
-
-  static getDerivedStateFromError(error: any) {
-    return { error };
-  }
-
-  componentDidCatch(error: any, errorInfo: any) {
-    console.error('Lexical editor error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.error) {
-      return (
-        <div className="error-boundary">
-          <h3>Something went wrong</h3>
-          <p>The editor encountered an error. Please try again.</p>
-          <button onClick={() => this.setState({ error: null })}>
-            Try again
-          </button>
-        </div>
-      );
+// Function to safely extract HTML content from various formats
+export const extractHtmlContent = (content: any): string => {
+  if (!content) return '';
+  
+  // If it's a string, check if it's JSON
+  if (typeof content === 'string') {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed && typeof parsed === 'object') {
+        // Handle {"html": "..."} format
+        if (typeof parsed.html === 'string') {
+          return parsed.html;
+        }
+        
+        // Handle nested {"html": {"html": "..."}} format
+        if (parsed.html && typeof parsed.html === 'object' && typeof parsed.html.html === 'string') {
+          return parsed.html.html;
+        }
+      }
+      
+      // If JSON parsing succeeded but didn't extract HTML, return empty string
+      return '';
+    } catch (e) {
+      // If it's not parseable JSON, assume it's direct HTML
+      return content;
     }
-    return this.props.children;
   }
-}
+  
+  // If it's an object, try to extract html property
+  if (typeof content === 'object' && content !== null) {
+    // Handle {html: "..."} format
+    if (typeof content.html === 'string') {
+      return content.html;
+    }
+    
+    // Handle nested {html: {html: "..."}} format
+    if (content.html && typeof content.html === 'object' && typeof content.html.html === 'string') {
+      return content.html.html;
+    }
+  }
+  
+  return '';
+};
 
 // Update the component signature to accept props
 interface RichTextEditorProps {
-  content: string;
+  content: any; // Accept any format
   onChange: (content: string) => void;
   placeholder?: string;
 }
 
-export default function RichTextEditor({ content, onChange }: RichTextEditorProps) {
-  // Add state to manage content
-  const [editorState, setEditorState] = useState('');
+export default function RichTextEditor({ content, onChange, placeholder = 'Start writing...' }: RichTextEditorProps) {
+  // State to track if editor has been initialized with content
+  const [isInitialized, setIsInitialized] = useState(false);
   
-  // Add function to handle editor changes
-  const handleEditorChange = (editorState: any) => {
-    // Extract content as HTML or text
-    const htmlContent = editorState.toHTML ? editorState.toHTML() : '';
-    onChange(htmlContent);
+  // Extract the HTML content
+  const htmlContent = extractHtmlContent(content);
+  
+  // Debug the content we're receiving
+  useEffect(() => {
+    console.log('RichTextEditor received content:', {
+      contentType: typeof content,
+      contentPreview: typeof content === 'string' ? content.substring(0, 100) + '...' : 'non-string',
+      htmlContentExtracted: htmlContent.substring(0, 100) + '...',
+    });
+  }, [content, htmlContent]);
+
+  // Function to handle editor changes
+  const handleEditorChange = (editorState: EditorState, editor: LexicalEditor) => {
+    editorState.read(() => {
+      try {
+        // Generate HTML from editor content using the editor instance
+        const html = $generateHtmlFromNodes(editor);
+        
+        // Create a consistent JSON structure for storage
+        const contentObject = {
+          html: html
+        };
+        
+        // Pass the serialized content to the parent component
+        onChange(JSON.stringify(contentObject));
+        
+        // Debug
+        console.log('Editor content updated:', {
+          htmlLength: html.length,
+          htmlPreview: html.substring(0, 100) + '...',
+        });
+      } catch (error) {
+        console.error('Error serializing editor content:', error);
+      }
+    });
   };
 
-  // Initialize editor with content if provided
-  useEffect(() => {
-    if (content && !editorState) {
-      // Initialize editor with content
+  // This function prepares the initial editor state
+  const prepopulatedContent = (editor: any) => {
+    try {
+      // Mark as initialized so we don't re-initialize
+      setIsInitialized(true);
+      
+      // If we have HTML content to initialize with
+      if (htmlContent) {
+        // Parse the HTML content and update the editor
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(htmlContent, 'text/html');
+        
+        // Access editor internals to properly import HTML
+        editor.update(() => {
+          const root = $getRoot();
+          root.clear();
+          
+          try {
+            // Try to import the DOM nodes
+            const nodes = $generateNodesFromDOM(editor, dom);
+            nodes.forEach(node => root.append(node));
+          } catch (importError) {
+            console.error('Error importing HTML into editor:', importError);
+            // If import fails, at least create an empty paragraph
+            const paragraph = editor._createParagraphNode();
+            root.append(paragraph);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing editor content:', error);
     }
-  }, [content, editorState]);
+  };
 
   const initialConfig = {
     namespace: 'BlogEditor',
@@ -104,7 +176,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       },
       link: 'editor-link',
     },
-    onError: (error: any) => console.error(error),
+    onError: (error: any) => console.error('Lexical editor error:', error),
     nodes: [
       HeadingNode,
       ListNode,
@@ -119,6 +191,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       VideoNode,
       PollNode,
     ],
+    editorState: isInitialized ? undefined : prepopulatedContent,
   };
 
   return (
@@ -128,8 +201,9 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         <div className="editor-inner">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
+            placeholder={<div className="editor-placeholder">{placeholder}</div>}
             ErrorBoundary={LexicalErrorBoundary}
-            />
+          />
           <HistoryPlugin />
           <AutoFocusPlugin />
           <ListPlugin />
@@ -140,6 +214,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
           <ImageSelectionPlugin />
           <VideoPlugin />
           <PollPlugin />
+          <OnChangePlugin onChange={handleEditorChange} />
         </div>
       </div>
     </LexicalComposer>

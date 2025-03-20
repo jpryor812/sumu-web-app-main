@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   REDO_COMMAND,
   UNDO_COMMAND,
@@ -9,14 +9,19 @@ import {
   createCommand,
   $insertNodes,
   $createTextNode,
+  $getRoot,
+  LexicalNode,
+  ElementNode,
 } from 'lexical';
-import { TOGGLE_LINK_COMMAND, $createLinkNode } from '@lexical/link';import { $createHeadingNode } from '@lexical/rich-text';
+import { TOGGLE_LINK_COMMAND, $createLinkNode } from '@lexical/link';
+import { $createHeadingNode, $isHeadingNode } from '@lexical/rich-text';
 import { $createListNode, $isListNode, ListNode } from '@lexical/list';
-import { $getSelection, $isRangeSelection, $createParagraphNode, ElementNode } from 'lexical';
+import { $getSelection, $isRangeSelection, $createParagraphNode } from 'lexical';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from '@lexical/list';
 import { INSERT_VIDEO_COMMAND } from './plugins/VideoPlugin';
 import React from 'react';
 import { $createPollNode, createPollOption } from './nodes/PollNode';
+import { $findMatchingParent } from '@lexical/utils';
 
 import { 
     Bold, 
@@ -33,7 +38,7 @@ import {
     Vote, 
     Undo, 
     Redo 
-  } from 'lucide-react';
+} from 'lucide-react';
 
 // Define command types for TypeScript
 export const INSERT_IMAGE_COMMAND = createCommand<{
@@ -50,6 +55,50 @@ export const INSERT_POLL_COMMAND = createCommand<{
 
 export default function ToolbarPlugin(): React.ReactNode {
   const [editor] = useLexicalComposerContext();
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [activeHeading, setActiveHeading] = useState('');
+  const [activeList, setActiveList] = useState('');
+
+  // Update toolbar state based on current selection
+  useEffect(() => {
+    const updateToolbar = () => {
+      editor.update(() => {
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) return;
+
+        // Text formatting
+        setIsBold(selection.hasFormat('bold'));
+        setIsItalic(selection.hasFormat('italic'));
+        setIsUnderline(selection.hasFormat('underline'));
+
+        // Get current node
+        const anchorNode = selection.anchor.getNode();
+        
+        // Check for heading
+        const headingNode = $findMatchingParent(
+          anchorNode, 
+          node => $isHeadingNode(node)
+        );
+        setActiveHeading(headingNode && $isHeadingNode(headingNode) ? headingNode.getTag() : '');
+        
+        // Check for list
+        const listNode = $findMatchingParent(
+          anchorNode, 
+          node => $isListNode(node)
+        );
+        setActiveList(listNode && $isListNode(listNode) ? listNode.getListType() : '');
+      });
+    };
+
+    // Register update listener
+    return editor.registerUpdateListener(({editorState}) => {
+      editorState.read(() => {
+        updateToolbar();
+      });
+    });
+  }, [editor]);
 
   // Text formatting
   const formatBold = useCallback((): void => {
@@ -64,75 +113,82 @@ export default function ToolbarPlugin(): React.ReactNode {
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
   }, [editor]);
 
-  // Headings
+  // Headings - Fixed implementation
   const formatHeading = useCallback((level: 'h1' | 'h2' | 'h3'): void => {
     editor.update(() => {
       const selection = $getSelection();
       if (!$isRangeSelection(selection)) return;
+
+      // Check if we're toggling the same heading level off
+      const shouldRemoveHeading = activeHeading === level;
       
-      // Get anchor (beginning) and focus (end) nodes
-      const anchorNode = selection.anchor.getNode();
-      const focusNode = selection.focus.getNode();
+      // Get selected nodes
+      const nodes = selection.getNodes();
       
-      if (anchorNode === focusNode) {
-        // Single node selection
-        let targetNode = anchorNode;
+      if (nodes.length === 0) return;
+      
+      for (const node of nodes) {
+        // Find the block parent of this node
+        const blockParent = $findMatchingParent(
+          node,
+          parent => parent.getType() !== 'text' && parent.getType() !== 'linebreak'
+        );
         
-        // Navigate up to the block parent if we're in a text node
-        if (targetNode.getType() === 'text') {
-          targetNode = targetNode.getParent() || targetNode;
-        }
+        if (!blockParent) continue;
         
-        // Only create heading if we have a valid target
-        if (targetNode && !targetNode.isAttached()) return;
-        
-        // Create the new heading node
-        const headingNode = $createHeadingNode(level);
-        
-        // Capture children before replacing
-        if (targetNode instanceof ElementNode) {
-          const children = targetNode.getChildren();
-          if (children && children.length > 0) {
-            headingNode.append(...children);
+        // Check if parent is a root node, which can't be replaced
+        if (blockParent.getType() === 'root') {
+          // For root nodes, we need to clear and append
+          const root = $getRoot();
+          
+          if (shouldRemoveHeading) {
+            // Create paragraph with text content
+            const paragraph = $createParagraphNode();
+            const content = blockParent.getTextContent();
+            paragraph.setTextContent(content);
+            
+            root.clear();
+            root.append(paragraph);
+          } else {
+            // Create heading with text content
+            const headingNode = $createHeadingNode(level);
+            const content = blockParent.getTextContent();
+            headingNode.setTextContent(content);
+            
+            root.clear();
+            root.append(headingNode);
+          }
+        } else {
+          // Regular case - not a root node
+          const content = blockParent.getTextContent();
+          
+          if (shouldRemoveHeading) {
+            // Convert heading to paragraph
+            const paragraph = $createParagraphNode();
+            paragraph.setTextContent(content);
+            
+            blockParent.replace(paragraph);
+          } else {
+            // Convert to heading
+            const headingNode = $createHeadingNode(level);
+            headingNode.setTextContent(content);
+            
+            blockParent.replace(headingNode);
           }
         }
-        
-        // Replace the node if it exists and is attached
-        targetNode.replace(headingNode);
-      } else {
-        // Multiple node selection is more complex
-        // For now, just handle the simplest case
-        console.log('Multiple node selection not fully supported');
       }
     });
-  }, [editor]);
+  }, [editor, activeHeading]);
 
-  // Lists
+  // Lists - Use built-in commands for better handling
   const formatBulletList = useCallback((): void => {
+    // If already in bullet list, this will toggle it off
     editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
   }, [editor]);
 
   const formatNumberedList = useCallback((): void => {
+    // If already in numbered list, this will toggle it off
     editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-  }, [editor]);
-
-  // Alignment
-  const formatAlignment = useCallback((alignment: 'left' | 'center' | 'right'): void => {
-    editor.update(() => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection)) {
-        const nodes = selection.getNodes();
-        nodes.forEach(node => {
-          if (node.getType() !== 'text') {
-            // Apply alignment as a style
-            const element = node.getParent();
-            if (element) {
-              element.setFormat(alignment);
-            }
-          }
-        });
-      }
-    });
   }, [editor]);
 
   // Insert link
@@ -147,8 +203,7 @@ export default function ToolbarPlugin(): React.ReactNode {
       const url = prompt('Enter URL');
       if (!url) return;
       
-      // Instead of extracting nodes (which removes them from the tree),
-      // get the text content and create a new text node
+      // Get the selected text
       const selectedText = selection.getTextContent();
       
       // Create the link node with the URL
@@ -205,12 +260,11 @@ export default function ToolbarPlugin(): React.ReactNode {
       editor.dispatchCommand(INSERT_VIDEO_COMMAND, { 
         src: url,
         width: 640, 
-        height: 360, 
+        height: 380, 
         showControls: true 
       });
     }
   }, [editor]);
-
 
   // Insert poll
   const insertPoll = useCallback((): void => {
@@ -218,31 +272,24 @@ export default function ToolbarPlugin(): React.ReactNode {
     
     editor.update(() => {
       try {
-        console.log('Creating poll node directly with question:', question);
-        
         // Create with explicit options
         const pollNode = $createPollNode(question, [
           createPollOption('Option 1'),
           createPollOption('Option 2')
         ]);
         
-        console.log('Poll node created:', pollNode);
-        
         // Get selection and insert
         const selection = $getSelection();
         if (selection) {
           selection.insertNodes([pollNode]);
-          console.log('Poll inserted at selection');
         } else {
           $insertNodes([pollNode]);
-          console.log('Poll inserted without selection');
         }
       } catch (error) {
         console.error('Error inserting poll:', error);
       }
     });
   }, [editor]);
-
 
   // History
   const undo = useCallback((): void => {
@@ -254,145 +301,146 @@ export default function ToolbarPlugin(): React.ReactNode {
   }, [editor]);
 
   return (
-<div className="toolbar">
-<button 
-  type="button"
-  onClick={formatBold} 
-  className="toolbar-item" 
-  aria-label="Format Bold"
-  data-tooltip="Bold"  // Custom data attribute for tooltip
->
-  <Bold size={18} />
-</button>
+    <div className="toolbar">
+      <button 
+        type="button"
+        onClick={formatBold} 
+        className={`toolbar-item ${isBold ? 'active' : ''}`}
+        aria-label="Format Bold"
+        data-tooltip="Bold"
+      >
+        <Bold size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={formatItalic} 
-  className="toolbar-item" 
-  aria-label="Format Italic"
-  data-tooltip="Italic"  // Custom data attribute for tooltip
->
-  <Italic size={18} />
-</button>
-  <button 
-    type="button"
-    onClick={formatUnderline} 
-    className="toolbar-item" 
-    aria-label="Format Underline"
-    data-tooltip="Underline"  // Custom data attribute for tooltip
-  >
-    <Underline size={18} />
-  </button>
+      <button 
+        type="button"
+        onClick={formatItalic} 
+        className={`toolbar-item ${isItalic ? 'active' : ''}`}
+        aria-label="Format Italic"
+        data-tooltip="Italic"
+      >
+        <Italic size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={() => formatHeading('h1')} 
-  className="toolbar-item" 
-  aria-label="Format Heading 1"
-  data-tooltip="Heading 1"  // Custom data attribute for tooltip
->
-  <Heading1 size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={formatUnderline} 
+        className={`toolbar-item ${isUnderline ? 'active' : ''}`}
+        aria-label="Format Underline"
+        data-tooltip="Underline"
+      >
+        <Underline size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={() => formatHeading('h2')} 
-  className="toolbar-item" 
-  aria-label="Format Heading 2"
-  data-tooltip="Heading 2"  // Custom data attribute for tooltip
->
-  <Heading2 size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={() => formatHeading('h1')} 
+        className={`toolbar-item ${activeHeading === 'h1' ? 'active' : ''}`}
+        aria-label="Format Heading 1"
+        data-tooltip="Heading 1"
+      >
+        <Heading1 size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={() => formatHeading('h3')} 
-  className="toolbar-item" 
-  aria-label="Format Heading 3"
-  data-tooltip="Heading 3"  // Custom data attribute for tooltip
->
-  <Heading3 size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={() => formatHeading('h2')} 
+        className={`toolbar-item ${activeHeading === 'h2' ? 'active' : ''}`}
+        aria-label="Format Heading 2"
+        data-tooltip="Heading 2"
+      >
+        <Heading2 size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={formatBulletList} 
-  className="toolbar-item" 
-  aria-label="Format Bullet List"
-  data-tooltip="Bullet List"  // Custom data attribute for tooltip
->
-  <List size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={() => formatHeading('h3')} 
+        className={`toolbar-item ${activeHeading === 'h3' ? 'active' : ''}`}
+        aria-label="Format Heading 3"
+        data-tooltip="Heading 3"
+      >
+        <Heading3 size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={formatNumberedList} 
-  className="toolbar-item" 
-  aria-label="Format Numbered List"
-  data-tooltip="Numbered List"  // Custom data attribute for tooltip
->
-  <ListOrdered size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={formatBulletList} 
+        className={`toolbar-item ${activeList === 'bullet' ? 'active' : ''}`}
+        aria-label="Format Bullet List"
+        data-tooltip="Bullet List"
+      >
+        <List size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={insertLink} 
-  className="toolbar-item" 
-  aria-label="Insert Link"
-  data-tooltip="Link"  // Custom data attribute for tooltip
->
-  <LinkIcon size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={formatNumberedList} 
+        className={`toolbar-item ${activeList === 'number' ? 'active' : ''}`}
+        aria-label="Format Numbered List"
+        data-tooltip="Numbered List"
+      >
+        <ListOrdered size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={insertImage} 
-  className="toolbar-item" 
-  aria-label="Insert Image"
-  data-tooltip="Image"  // Custom data attribute for tooltip
->
-  <ImageIcon size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={insertLink} 
+        className="toolbar-item"
+        aria-label="Insert Link"
+        data-tooltip="Link"
+      >
+        <LinkIcon size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={insertVideo} 
-  className="toolbar-item" 
-  aria-label="Insert Video"
-  data-tooltip="Video"  // Custom data attribute for tooltip
->
-  <Video size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={insertImage} 
+        className="toolbar-item"
+        aria-label="Insert Image"
+        data-tooltip="Image"
+      >
+        <ImageIcon size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={insertPoll} 
-  className="toolbar-item" 
-  aria-label="Create Poll"
-  data-tooltip="Poll"  // Custom data attribute for tooltip
->
-  <Vote size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={insertVideo} 
+        className="toolbar-item"
+        aria-label="Insert Video"
+        data-tooltip="Video"
+      >
+        <Video size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={undo} 
-  className="toolbar-item" 
-  aria-label="Undo"
-  data-tooltip="Undo"  // Custom data attribute for tooltip
->
-  <Undo size={18} />
-</button>
+      <button 
+        type="button"
+        onClick={insertPoll} 
+        className="toolbar-item"
+        aria-label="Create Poll"
+        data-tooltip="Poll"
+      >
+        <Vote size={18} />
+      </button>
 
-<button 
-  type="button"
-  onClick={redo} 
-  className="toolbar-item" 
-  aria-label="Redo"
-  data-tooltip="Redo"  // Custom data attribute for tooltip
->
-  <Redo size={18} />
-</button>
-</div>
+      <button 
+        type="button"
+        onClick={undo} 
+        className="toolbar-item"
+        aria-label="Undo"
+        data-tooltip="Undo"
+      >
+        <Undo size={18} />
+      </button>
+
+      <button 
+        type="button"
+        onClick={redo} 
+        className="toolbar-item"
+        aria-label="Redo"
+        data-tooltip="Redo"
+      >
+        <Redo size={18} />
+      </button>
+    </div>
   );
 }

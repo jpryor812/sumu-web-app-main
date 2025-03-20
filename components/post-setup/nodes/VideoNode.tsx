@@ -31,6 +31,15 @@ export class VideoNode extends DecoratorNode<React.ReactNode> {
     );
   }
 
+  static importJSON(serializedNode: any): VideoNode {
+    return new VideoNode(
+      serializedNode.src,
+      serializedNode.width || 640,
+      serializedNode.height || 360,
+      serializedNode.showControls !== undefined ? serializedNode.showControls : true
+    );
+  }
+
   constructor(
     src: string,
     width: number = 640,

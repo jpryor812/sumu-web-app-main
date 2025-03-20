@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SideNav from "@/components/SideNav";
 import StaticAura from "@/components/StaticAura";
-import RichTextEditor from '@/components/post-setup/RichTextEditor';
+import RichTextEditor, { extractHtmlContent } from '@/components/post-setup/RichTextEditor';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
@@ -28,15 +28,6 @@ interface MembershipTier {
   order?: number;
 }
 
-interface Tier {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  order?: number; // Optional order property
-}
-
 export default function CreatePost() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -55,12 +46,12 @@ export default function CreatePost() {
     tierAccess: 'all'
   });
 
-  const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
+  const [tiers, setTiers] = useState<MembershipTier[]>([]);
   const [loadingTiers, setLoadingTiers] = useState(true);
   const [editorSideTipVisible, setEditorSideTipVisible] = useState(true);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
-  const [tiers, setTiers] = useState<MembershipTier[]>([]);
 
+  // Handle responsive sidebar
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -75,79 +66,93 @@ export default function CreatePost() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Fetch membership tiers and post data (combined effect)
   useEffect(() => {
-    // Fetch the creator's membership tiers from the creators table
-    const fetchMembershipTiers = async () => {
+    const fetchData = async () => {
       try {
+        // Get the authenticated user
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Not authenticated');
-
-        // Get the creator's profile which contains the membership tiers
-        const { data, error } = await supabase
-          .from('creators')
-          .select('membership_tiers')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-        
-        // Set the membership tiers from the creator's profile
-        if (data && data.membership_tiers) {
-          const tiersWithIds = data.membership_tiers.map((tier: any, index: number) => ({
-            ...tier,
-            id: `tier_${index}`,
-            order: index
-          }));
-          setMembershipTiers(tiersWithIds);
-          setTiers(tiersWithIds);
-        } else {
-          setMembershipTiers([]);
-          setTiers([]);
+        if (!user) {
+          toast.error('You must be logged in');
+          return;
         }
-      } catch (error) {
-        console.error('Error fetching membership tiers:', error);
-        toast.error('Failed to load membership tiers');
-      } finally {
-        setLoadingTiers(false);
-      }
-    };
 
-    // If postId exists, fetch the post data for editing
-    const fetchPost = async () => {
-      if (!postId) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('posts')
-          .select('*')
-          .eq('id', postId)
-          .single();
+        // Fetch membership tiers
+        try {
+          const { data: creatorData, error: tierError } = await supabase
+            .from('creators')
+            .select('membership_tiers')
+            .eq('id', user.id)
+            .single();
 
-        if (error) throw error;
-        
-        if (data) {
+          if (tierError) throw tierError;
+          
+          if (creatorData && creatorData.membership_tiers) {
+            const tiersWithIds = creatorData.membership_tiers.map((tier: any, index: number) => ({
+              ...tier,
+              id: `tier_${index}`,
+              order: index
+            }));
+            setTiers(tiersWithIds);
+          } else {
+            setTiers([]);
+          }
+        } catch (tierError) {
+          console.error('Error fetching membership tiers:', tierError);
+        } finally {
+          setLoadingTiers(false);
+        }
+
+        // Fetch post data if editing an existing post
+        if (postId) {
+          setLoading(true);
+          
+          const { data: post, error: postError } = await supabase
+            .from('posts')
+            .select('*')
+            .eq('id', postId)
+            .eq('creator_id', user.id)
+            .single();
+          
+          if (postError) {
+            console.error('Error loading post:', postError);
+            toast.error('Failed to load post');
+            setLoading(false);
+            return;
+          }
+          
+          if (!post) {
+            toast.error('Post not found');
+            setLoading(false);
+            return;
+          }
+          
+          // Set the form data with the loaded post
           setFormData({
-            id: data.id,
-            title: data.title || '',
-            subtitle: data.subtitle || '',
-            content: data.content || '',
-            tierAccess: data.tier_access || 'all',
-            coverImage: data.cover_image || ''
+            id: post.id,
+            title: post.title || '',
+            subtitle: post.subtitle || '',
+            content: post.content, // Keep the original format
+            coverImage: post.cover_image || '',
+            tierAccess: post.tier_access || 'all'
           });
           
-          // If the post has a tier access setting, select that tier
-          if (data.tier_access && data.tier_access !== 'all') {
-            setSelectedTiers([data.tier_access]);
+          // Set selected tiers
+          if (post.tier_access && post.tier_access !== 'all') {
+            setSelectedTiers([post.tier_access]);
           }
+          
+          toast.success('Post loaded');
+          setLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching post:', error);
-        toast.error('Failed to load post');
+        console.error('Failed to fetch data:', error);
+        toast.error('Something went wrong');
+        setLoading(false);
       }
     };
 
-    fetchMembershipTiers();
-    fetchPost();
+    fetchData();
   }, [postId]);
 
   const handleTierChange = (tierId: string, isChecked: boolean) => {
@@ -157,7 +162,6 @@ export default function CreatePost() {
       // If checking a tier, add it and all higher tiers
       const tierIndex = tiers.findIndex(tier => tier.id === tierId);
       
-      // Guard against invalid tier ID
       if (tierIndex === -1) {
         console.error(`Tier with ID ${tierId} not found`);
         return;
@@ -167,7 +171,6 @@ export default function CreatePost() {
         .filter((_, index) => index >= tierIndex)
         .map(tier => tier.id);
       
-      // Combine existing selections with new ones, removing duplicates
       newSelectedTiers = [...new Set([...newSelectedTiers, ...tiersToAdd])];
     } else {
       // If unchecking, just remove this specific tier
@@ -176,8 +179,7 @@ export default function CreatePost() {
     
     setSelectedTiers(newSelectedTiers);
     
-    // If no tiers are selected, set to 'all' (public access)
-    // Otherwise, use the lowest selected tier
+    // Update the tierAccess in formData based on selections
     if (newSelectedTiers.length === 0) {
       setFormData({...formData, tierAccess: 'all'});
     } else {
@@ -202,12 +204,18 @@ export default function CreatePost() {
         return currentOrder < lowestOrder ? current : lowest;
       }, null);
       
-      // Set the tierAccess to the ID of the lowest selected tier, or 'all' if none found
       setFormData({
         ...formData, 
         tierAccess: lowestSelectedTier ? lowestSelectedTier.id : 'all'
       });
     }
+  };
+
+  const handleEditorChange = (content: string) => {
+    setFormData(prev => ({
+      ...prev,
+      content: content
+    }));
   };
 
   const savePostToSupabase = async (isPublished = false, isPreview = false) => {
@@ -220,15 +228,46 @@ export default function CreatePost() {
       setLoading(true);
       
       // Get the current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw authError;
+      }
+      
+      if (!authData.user) {
+        toast.error('You must be logged in');
+        return null;
+      }
+      
+      const user = authData.user;
+
+      // Before the try-catch block, define contentToSave with a more flexible type
+      let contentToSave: string | { html: string };
+
+      // Then in your code
+      try {
+        contentToSave = JSON.parse(formData.content);
+      } catch (e) {
+        contentToSave = { html: formData.content }; // Now this works
+      }
+
+      // Later in the same function
+      if (typeof formData.content === 'string') {
+        contentToSave = { html: formData.content }; // This also works
+      }
+
+      // When using contentToSave, you may need to extract the HTML content:
+      const htmlContent = typeof contentToSave === 'string' 
+        ? contentToSave 
+        : contentToSave.html;
 
       // Prepare the post data
       const postData = {
         id: formData.id || undefined,
         title: formData.title,
         subtitle: formData.subtitle || null,
-        content: formData.content,
+        content: htmlContent, // Use our processed content
         tier_access: formData.tierAccess,
         cover_image: formData.coverImage || null,
         is_published: isPublished,
@@ -236,16 +275,56 @@ export default function CreatePost() {
         published_at: isPublished ? new Date().toISOString() : null
       };
 
-      // Save to Supabase
-      const { data: post, error } = await supabase
-        .from('posts')
-        .upsert(postData)
-        .select()
-        .single();
-
-      if (error) throw error;
+      let post;
       
-      toast.success(isPublished ? 'Post published!' : (isPreview ? 'Preview ready' : 'Draft saved'));
+      if (formData.id) {
+        // Update existing post
+        const { data, error } = await supabase
+          .from('posts')
+          .update(postData)
+          .eq('id', formData.id)
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('Supabase update error:', error);
+          throw error;
+        }
+        
+        post = data;
+      } else {
+        // Create new post
+        const { data, error } = await supabase
+          .from('posts')
+          .insert({
+            ...postData,
+            creator_id: user.id
+          })
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('Supabase insert error:', error);
+          throw error;
+        }
+        
+        post = data;
+        
+        // Update form with the new post ID
+        setFormData(prev => ({
+          ...prev,
+          id: post.id
+        }));
+      }
+
+      toast.success(
+        isPublished 
+          ? 'Post published successfully!' 
+          : isPreview 
+            ? 'Preview ready' 
+            : 'Draft saved'
+      );
+      
       return post;
     } catch (error) {
       console.error('Failed to save post:', error);
@@ -264,8 +343,16 @@ export default function CreatePost() {
   };
 
   const handlePreview = async () => {
+    if (!formData.title) {
+      toast.error('Please add a title before previewing');
+      return;
+    }
+    
+    // Save the post as a preview
     const post = await savePostToSupabase(false, true);
+    
     if (post) {
+      // Navigate to preview with the post ID
       router.push(`/create-post/preview?id=${post.id}`);
     }
   };
@@ -340,7 +427,7 @@ export default function CreatePost() {
                   {/* Rich Text Editor */}
                   <RichTextEditor
                     content={formData.content}
-                    onChange={(content) => setFormData({...formData, content})}
+                    onChange={handleEditorChange}
                     placeholder="Write your blog post or post your images, videos, and polls here..."
                   />
                   
@@ -348,9 +435,6 @@ export default function CreatePost() {
                   <div className="space-y-3 bg-gray-700 p-4 rounded-lg">
                     <div className="text-white font-medium mb-2">Who is This For? (Select all that apply)</div>
                     <div className="space-y-2">
-                      <label className="flex items-center space-x-2">
-                      </label>
-                      
                       {loadingTiers ? (
                         <div className="py-2 text-gray-400">Loading membership tiers...</div>
                       ) : tiers.length === 0 ? (
@@ -361,7 +445,7 @@ export default function CreatePost() {
                           </Link>
                         </div>
                       ) : (
-                        tiers.map((tier, index) => (
+                        tiers.map((tier) => (
                           <label key={tier.id} className="flex items-center space-x-2">
                             <input
                               type="checkbox"
